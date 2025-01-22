@@ -11,6 +11,7 @@ import "../src/SimpleOracleStrategy.sol";
 import "../src/interfaces/IRebalancer.sol";
 import "./mocks/MockOracle.sol";
 import "./mocks/OpenRouter.sol";
+import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
 contract SimpleOracleStrategyTest is Test {
     using BookIdLibrary for IBookManager.BookKey;
@@ -59,7 +60,14 @@ contract SimpleOracleStrategyTest is Test {
         cloberOpenRouter.open(keyA, "");
         cloberOpenRouter.open(keyB, "");
 
-        strategy = new SimpleOracleStrategy(oracle, IRebalancer(address(this)), bookManager, address(this));
+        strategy = SimpleOracleStrategy(
+            address(
+                new ERC1967Proxy(
+                    address(new SimpleOracleStrategy(oracle, IRebalancer(address(this)), bookManager)),
+                    abi.encodeWithSelector(SimpleOracleStrategy.initialize.selector, address(this))
+                )
+            )
+        );
 
         key = bytes32(uint256(123123));
 

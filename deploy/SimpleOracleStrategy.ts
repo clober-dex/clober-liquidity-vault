@@ -28,8 +28,16 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
     throw new Error('Unknown chain')
   }
 
-  const args = [oracleAddress, rebalancer.address, BOOK_MANAGER[chain.id], owner]
-  await deployWithVerify(hre, 'SimpleOracleStrategy', args)
+  const args = [oracleAddress, rebalancer.address, BOOK_MANAGER[chain.id]]
+  await deployWithVerify(hre, 'SimpleOracleStrategy', args, {
+    proxy: {
+      proxyContract: 'UUPS',
+      execute: {
+        methodName: 'initialize',
+        args: [owner],
+      },
+    },
+  })
 }
 
 deployFunction.tags = ['SimpleOracleStrategy']

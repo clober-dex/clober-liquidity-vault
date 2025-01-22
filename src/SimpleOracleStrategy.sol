@@ -16,8 +16,10 @@ import {IStrategy} from "./interfaces/IStrategy.sol";
 import {IOracle} from "./interfaces/IOracle.sol";
 import {ISimpleOracleStrategy} from "./interfaces/ISimpleOracleStrategy.sol";
 import {IRebalancer} from "./interfaces/IRebalancer.sol";
+import {UUPSUpgradeable} from "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
+import {Initializable} from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
-contract SimpleOracleStrategy is ISimpleOracleStrategy, Ownable2Step {
+contract SimpleOracleStrategy is ISimpleOracleStrategy, Ownable2Step, UUPSUpgradeable, Initializable {
     using CurrencyLibrary for Currency;
     using FeePolicyLibrary for FeePolicy;
     using TickLibrary for Tick;
@@ -40,12 +42,16 @@ contract SimpleOracleStrategy is ISimpleOracleStrategy, Ownable2Step {
         _;
     }
 
-    constructor(IOracle referenceOracle_, IRebalancer rebalancer_, IBookManager bookManager_, address initialOwner)
-        Ownable(initialOwner)
-    {
+    constructor(IOracle referenceOracle_, IRebalancer rebalancer_, IBookManager bookManager_) Ownable(msg.sender) {
         referenceOracle = referenceOracle_;
         rebalancer = rebalancer_;
         bookManager = bookManager_;
+    }
+
+    function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
+
+    function initialize(address initialOwner) external initializer {
+        _transferOwnership(initialOwner);
     }
 
     function getConfig(bytes32 key) external view returns (Config memory) {
