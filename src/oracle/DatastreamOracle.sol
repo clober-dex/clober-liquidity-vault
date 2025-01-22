@@ -28,6 +28,7 @@ contract DatastreamOracle is
 {
     string public constant STRING_DATASTREAMS_FEEDLABEL = "feedIDs";
     string public constant STRING_DATASTREAMS_QUERYLABEL = "timestamp";
+    uint256 private constant MAX_REQUESTS = 5;
 
     IVerifierProxy public immutable verifier;
     bytes32[] internal _feedIds;
@@ -67,7 +68,7 @@ contract DatastreamOracle is
 
     function checkLog(Log calldata log, bytes memory) external view returns (bool, bytes memory) {
         uint256 length = _feedIds.length;
-        string[] memory stringFeedIds = new string[](length);
+        string[] memory stringFeedIds = new string[](MAX_REQUESTS);
         uint256 bitmap = requestBitmap;
         uint256 l = 0;
         for (uint256 i = 0; i < length; ++i) {
@@ -76,6 +77,9 @@ contract DatastreamOracle is
             }
             stringFeedIds[l] = Strings.toHexString(uint256(_feedIds[i]), 32);
             ++l;
+            if (l == MAX_REQUESTS) {
+                break;
+            }
         }
         assembly {
             mstore(stringFeedIds, l)
@@ -170,7 +174,7 @@ contract DatastreamOracle is
         emit SetFeed(data.asset, feedId, data.index);
     }
 
-    function decimals() external pure returns (uint8) {
+    function decimals() public pure returns (uint8) {
         return 18;
     }
 
@@ -219,6 +223,7 @@ contract DatastreamOracle is
     }
 
     function setFallbackOracle(address newFallbackOracle) external onlyOwner {
+        if (IOracle(newFallbackOracle).decimals() != decimals()) revert DifferentPrecision();
         fallbackOracle = newFallbackOracle;
         emit SetFallbackOracle(newFallbackOracle);
     }
