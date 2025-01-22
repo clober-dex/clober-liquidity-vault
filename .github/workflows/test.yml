@@ -35,3 +35,5 @@ jobs:
         run: |
           forge test -vvv
         id: test
+        env:
+          FORK_URL: ${{ secrets.FORK_URL }}
