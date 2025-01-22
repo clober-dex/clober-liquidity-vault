@@ -36,7 +36,7 @@ contract ScenarioTest is Test {
     function setUp() public {
         uint256 newFork = vm.createFork(vm.envString("FORK_URL"));
         vm.selectFork(newFork);
-        vm.rollFork(23818140);
+        vm.rollFork(25372144);
         bookManager = IBookManager(0x382CCccbD3b142D7DA063bF68cd0c89634767F76);
         datastreamOracle = IDatastreamOracle(0xb0272A76d2B2414415D474d55b2fAe15f04E3D20);
 
