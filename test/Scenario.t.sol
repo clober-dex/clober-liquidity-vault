@@ -2,11 +2,13 @@
 pragma solidity ^0.8.0;
 
 import "forge-std/Test.sol";
-import "../src/Operator.sol";
-import "../src/Minter.sol";
 
 import {IHooks} from "clober-dex/v2-core/interfaces/IHooks.sol";
 import {FeePolicyLibrary} from "clober-dex/v2-core/libraries/FeePolicy.sol";
+import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+
+import "../src/Operator.sol";
+import "../src/Minter.sol";
 import "../src/SimpleOracleStrategy.sol";
 import "./interface/IController.sol";
 
@@ -35,17 +37,44 @@ contract ScenarioTest is Test {
         uint256 newFork = vm.createFork(vm.envString("FORK_URL"));
         vm.selectFork(newFork);
         vm.rollFork(23818140);
+        bookManager = IBookManager(0x382CCccbD3b142D7DA063bF68cd0c89634767F76);
+        datastreamOracle = IDatastreamOracle(0xb0272A76d2B2414415D474d55b2fAe15f04E3D20);
 
-        operator = Operator(0xBB854e8C0f04d919aD770b27015Ee90a9EF31Bf0);
-        minter = Minter(payable(0x732547BB8825eAb932Dcda030Fc446bf4A5552f3));
+        owner = address(this);
+        rebalancer = Rebalancer(
+            payable(
+                address(
+                    new ERC1967Proxy(
+                        address(new Rebalancer(bookManager, 100, "Liquidity Vault", "LV")),
+                        abi.encodeWithSelector(Rebalancer.initialize.selector, owner)
+                    )
+                )
+            )
+        );
+
+        operator = Operator(
+            address(
+                new ERC1967Proxy(
+                    address(new Operator(rebalancer, datastreamOracle)),
+                    abi.encodeWithSelector(Operator.initialize.selector, owner, 10 ** 18 / 20)
+                )
+            )
+        );
+        minter = new Minter(
+            address(bookManager), payable(address(rebalancer)), address(0x19cEeAd7105607Cd444F5ad10dd51356436095a1)
+        );
+        strategy = ISimpleOracleStrategy(
+            address(
+                new ERC1967Proxy(
+                    address(new SimpleOracleStrategy(datastreamOracle, rebalancer, bookManager)),
+                    abi.encodeWithSelector(SimpleOracleStrategy.initialize.selector, owner)
+                )
+            )
+        );
+        strategy.setOperator(address(operator), true);
+
         quote = IERC20(0xfde4C96c8593536E31F229EA8f37b2ADa2699bb2); // USDT
         controller = IController(0xe4AB03992e214acfdCD05ccFB5C5C16e3d0Ca371);
-        strategy = ISimpleOracleStrategy(0x9092e5f62b27c3eD78feB24A0F2ad6474D26DdA5);
-
-        rebalancer = operator.rebalancer();
-        owner = operator.owner();
-        datastreamOracle = operator.datastreamOracle();
-        bookManager = minter.bookManager();
 
         vm.prank(0xeE7981C4642dE8d19AeD11dA3bac59277DfD59D7);
         quote.transfer(address(this), 10000000000000);
