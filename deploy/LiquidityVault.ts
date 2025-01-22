@@ -10,7 +10,7 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
   const chain = await getChain(network.provider)
   const deployer = (await getNamedAccounts())['deployer'] as Address
 
-  if (await deployments.getOrNull('Rebalancer')) {
+  if (await deployments.getOrNull('LiquidityVault')) {
     return
   }
 
@@ -20,16 +20,16 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
   if (chain.testnet || isDevelopmentNetwork(chain.id)) {
     owner = deployer
     name = 'Clober Liquidity Vault'
-    symbol = 'LV'
+    symbol = 'CLV'
   } else if (chain.id === arbitrum.id || chain.id === base.id) {
     owner = SAFE_WALLET[chain.id] // Safe
     name = 'Clober Liquidity Vault'
-    symbol = 'LV'
+    symbol = 'CLV'
   } else {
     throw new Error('Unknown chain')
   }
 
-  await deployWithVerify(hre, 'Rebalancer', [BOOK_MANAGER[chain.id], 100, name, symbol], {
+  await deployWithVerify(hre, 'LiquidityVault', [BOOK_MANAGER[chain.id], 100, name, symbol], {
     proxy: {
       proxyContract: 'UUPS',
       execute: {
@@ -40,5 +40,5 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
   })
 }
 
-deployFunction.tags = ['Rebalancer']
+deployFunction.tags = ['LiquidityVault']
 export default deployFunction

@@ -9,7 +9,7 @@ import {Currency} from "clober-dex/v2-core/libraries/Currency.sol";
 
 import {IStrategy} from "./IStrategy.sol";
 
-interface IRebalancer {
+interface ILiquidityVault {
     struct Pool {
         BookId bookIdA;
         BookId bookIdB;

@@ -1,4 +1,4 @@
-# Clober-Rebalancer
+# Clober-Liquidity-Vault
 
 ## Install
 
@@ -9,7 +9,7 @@
 ### Installing From Source
 
 ```bash
-git clone https://github.com/clober-dex/rebalancer && cd rebalancer
+git clone https://github.com/clober-dex/liquidity-vault && cd liquidity-vault
 forge install
 ```
 

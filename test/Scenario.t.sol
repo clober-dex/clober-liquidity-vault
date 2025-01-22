@@ -23,7 +23,7 @@ contract ScenarioTest is Test {
     Minter public minter;
     IERC20 public quote;
     IDatastreamOracle public datastreamOracle;
-    IRebalancer public rebalancer;
+    ILiquidityVault public liquidityVault;
     ISimpleOracleStrategy public strategy;
     IController public controller;
     IBookManager public bookManager;
@@ -41,12 +41,12 @@ contract ScenarioTest is Test {
         datastreamOracle = IDatastreamOracle(0xb0272A76d2B2414415D474d55b2fAe15f04E3D20);
 
         owner = address(this);
-        rebalancer = Rebalancer(
+        liquidityVault = LiquidityVault(
             payable(
                 address(
                     new ERC1967Proxy(
-                        address(new Rebalancer(bookManager, 100, "Liquidity Vault", "LV")),
-                        abi.encodeWithSelector(Rebalancer.initialize.selector, owner)
+                        address(new LiquidityVault(bookManager, 100, "Liquidity Vault", "LV")),
+                        abi.encodeWithSelector(LiquidityVault.initialize.selector, owner)
                     )
                 )
             )
@@ -55,18 +55,18 @@ contract ScenarioTest is Test {
         operator = Operator(
             address(
                 new ERC1967Proxy(
-                    address(new Operator(rebalancer, datastreamOracle)),
+                    address(new Operator(liquidityVault, datastreamOracle)),
                     abi.encodeWithSelector(Operator.initialize.selector, owner, 10 ** 18 / 20)
                 )
             )
         );
         minter = new Minter(
-            address(bookManager), payable(address(rebalancer)), address(0x19cEeAd7105607Cd444F5ad10dd51356436095a1)
+            address(bookManager), payable(address(liquidityVault)), address(0x19cEeAd7105607Cd444F5ad10dd51356436095a1)
         );
         strategy = ISimpleOracleStrategy(
             address(
                 new ERC1967Proxy(
-                    address(new SimpleOracleStrategy(datastreamOracle, rebalancer, bookManager)),
+                    address(new SimpleOracleStrategy(datastreamOracle, liquidityVault, bookManager)),
                     abi.encodeWithSelector(SimpleOracleStrategy.initialize.selector, owner)
                 )
             )
@@ -99,7 +99,7 @@ contract ScenarioTest is Test {
         );
         askBookId = askBookKey.toId();
 
-        key = rebalancer.open(bidBookKey, askBookKey, "", address(strategy));
+        key = liquidityVault.open(bidBookKey, askBookKey, "", address(strategy));
         vm.prank(Ownable(address(strategy)).owner());
         strategy.setConfig(key, ISimpleOracleStrategy.Config(10000, 50000, 100000, 100000, 3000, 3000, 10000, 10000));
 
@@ -127,13 +127,13 @@ contract ScenarioTest is Test {
         require(user != address(this));
         uint256 amountA;
         uint256 amountB;
-        uint256 supply = ERC6909Supply(address(rebalancer)).totalSupply(uint256(key));
+        uint256 supply = ERC6909Supply(address(liquidityVault)).totalSupply(uint256(key));
         if (supply == 0) {
             amountA = lpAmount;
             amountB = lpAmount * oraclePrice / 10 ** 12;
         } else {
-            (IRebalancer.Liquidity memory liquidityA, IRebalancer.Liquidity memory liquidityB) =
-                rebalancer.getLiquidity(key);
+            (ILiquidityVault.Liquidity memory liquidityA, ILiquidityVault.Liquidity memory liquidityB) =
+                liquidityVault.getLiquidity(key);
             uint256 totalLiqauidityA = liquidityA.claimable + liquidityA.cancelable + liquidityA.reserve;
             uint256 totalLiqauidityB = liquidityB.claimable + liquidityB.cancelable + liquidityB.reserve;
             amountA = (totalLiqauidityA * lpAmount) / supply + 1;
@@ -143,8 +143,8 @@ contract ScenarioTest is Test {
         IMinter.SwapParams memory swapParams;
         quote.approve(address(minter), amountB);
         minter.mint{value: amountA}(key, amountA, amountB, lpAmount, permitParams, permitParams, swapParams);
-        ERC6909Supply(address(rebalancer)).transfer(
-            user, uint256(key), ERC6909Supply(address(rebalancer)).balanceOf(address(this), uint256(key))
+        ERC6909Supply(address(liquidityVault)).transfer(
+            user, uint256(key), ERC6909Supply(address(liquidityVault)).balanceOf(address(this), uint256(key))
         );
     }
 
@@ -205,14 +205,14 @@ contract ScenarioTest is Test {
 
     function testScenarioBullMarket() public {
         _mint(1 ether / 1000000, USER1);
-        IRebalancer.Liquidity memory liquidityA;
-        (liquidityA,) = rebalancer.getLiquidity(key);
+        ILiquidityVault.Liquidity memory liquidityA;
+        (liquidityA,) = liquidityVault.getLiquidity(key);
 
         assertEq(liquidityA.reserve, 1000000000000);
 
         _updatePosition(1000000);
         while (true) {
-            (, IRebalancer.Liquidity memory lqB) = rebalancer.getLiquidity(key);
+            (, ILiquidityVault.Liquidity memory lqB) = liquidityVault.getLiquidity(key);
 
             if (lqB.cancelable == 0) {
                 break;
@@ -222,8 +222,8 @@ contract ScenarioTest is Test {
             oraclePrice = oraclePrice + 100;
             _updatePosition(1000000);
         }
-        IRebalancer.Liquidity memory liquidityB;
-        (liquidityA, liquidityB) = rebalancer.getLiquidity(key);
+        ILiquidityVault.Liquidity memory liquidityB;
+        (liquidityA, liquidityB) = liquidityVault.getLiquidity(key);
 
         assertEq(liquidityA.reserve, 1802903537555);
         assertEq(liquidityA.cancelable, 0);
@@ -234,7 +234,7 @@ contract ScenarioTest is Test {
 
         _mint(1 ether, USER2);
 
-        (liquidityA, liquidityB) = rebalancer.getLiquidity(key);
+        (liquidityA, liquidityB) = liquidityVault.getLiquidity(key);
 
         assertEq(liquidityA.reserve, 602770749389222);
         assertEq(liquidityA.cancelable, 0);
@@ -246,8 +246,8 @@ contract ScenarioTest is Test {
 
     function testScenarioBearMarket() public {
         _mint(1 ether / 1000, USER1);
-        IRebalancer.Liquidity memory liquidityB;
-        (, liquidityB) = rebalancer.getLiquidity(key);
+        ILiquidityVault.Liquidity memory liquidityB;
+        (, liquidityB) = liquidityVault.getLiquidity(key);
 
         assertEq(liquidityB.reserve, 3000000);
         _updatePosition(1000000);
@@ -256,8 +256,8 @@ contract ScenarioTest is Test {
             oraclePrice = oraclePrice - 10;
             _updatePosition(1000000);
         }
-        IRebalancer.Liquidity memory liquidityA;
-        (liquidityA, liquidityB) = rebalancer.getLiquidity(key);
+        ILiquidityVault.Liquidity memory liquidityA;
+        (liquidityA, liquidityB) = liquidityVault.getLiquidity(key);
 
         assertEq(liquidityA.reserve, 114000000000000);
         assertEq(liquidityA.cancelable, 12000000000000);
@@ -268,7 +268,7 @@ contract ScenarioTest is Test {
 
         _mint(1 ether, USER2);
 
-        (liquidityA, liquidityB) = rebalancer.getLiquidity(key);
+        (liquidityA, liquidityB) = liquidityVault.getLiquidity(key);
 
         assertEq(liquidityA.reserve, 156000000000001);
         assertEq(liquidityA.cancelable, 12000000000000);
@@ -283,13 +283,13 @@ contract ScenarioTest is Test {
 
         _updatePosition(1000000);
 
-        (IRebalancer.Liquidity memory liquidityA, IRebalancer.Liquidity memory liquidityB) =
-            rebalancer.getLiquidity(key);
+        (ILiquidityVault.Liquidity memory liquidityA, ILiquidityVault.Liquidity memory liquidityB) =
+            liquidityVault.getLiquidity(key);
         _spend(10000000000000000);
         _take(100000000);
 
         _updatePosition(1000000);
-        (liquidityA, liquidityB) = rebalancer.getLiquidity(key);
+        (liquidityA, liquidityB) = liquidityVault.getLiquidity(key);
 
         assertEq(liquidityA.cancelable, 93333000000000000);
         assertEq(liquidityB.cancelable, 280000952);
@@ -297,7 +297,7 @@ contract ScenarioTest is Test {
         oraclePrice = 3200;
 
         _updatePosition(1000000);
-        (liquidityA, liquidityB) = rebalancer.getLiquidity(key);
+        (liquidityA, liquidityB) = liquidityVault.getLiquidity(key);
 
         assertEq(liquidityA.cancelable, 93333000000000000);
         assertEq(liquidityB.cancelable, 298667682);
@@ -308,7 +308,7 @@ contract ScenarioTest is Test {
         oraclePrice = 3800;
 
         _updatePosition(1000000);
-        (liquidityA, liquidityB) = rebalancer.getLiquidity(key);
+        (liquidityA, liquidityB) = liquidityVault.getLiquidity(key);
 
         assertEq(liquidityA.cancelable, 87125000000000000);
         assertEq(liquidityB.cancelable, 331076415);
@@ -316,14 +316,14 @@ contract ScenarioTest is Test {
 
     function testScenarioLowLiquidity() public {
         _mint(1e10, USER1);
-        (IRebalancer.Liquidity memory liquidityA, IRebalancer.Liquidity memory liquidityB) =
-            rebalancer.getLiquidity(key);
+        (ILiquidityVault.Liquidity memory liquidityA, ILiquidityVault.Liquidity memory liquidityB) =
+            liquidityVault.getLiquidity(key);
         assertEq(liquidityA.reserve, 10000000000);
         assertEq(liquidityB.reserve, 30);
 
         _updatePosition(1000000);
 
-        (liquidityA, liquidityB) = rebalancer.getLiquidity(key);
+        (liquidityA, liquidityB) = liquidityVault.getLiquidity(key);
 
         assertEq(liquidityA.cancelable, 0);
         assertEq(liquidityB.cancelable, 3);

@@ -15,7 +15,7 @@ import {Currency, CurrencyLibrary} from "clober-dex/v2-core/libraries/Currency.s
 import {IStrategy} from "./interfaces/IStrategy.sol";
 import {IOracle} from "./interfaces/IOracle.sol";
 import {ISimpleOracleStrategy} from "./interfaces/ISimpleOracleStrategy.sol";
-import {IRebalancer} from "./interfaces/IRebalancer.sol";
+import {ILiquidityVault} from "./interfaces/ILiquidityVault.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
 import {Initializable} from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
@@ -28,7 +28,7 @@ contract SimpleOracleStrategy is ISimpleOracleStrategy, Ownable2Step, UUPSUpgrad
     uint256 public constant LAST_RAW_AMOUNT_MASK = (1 << 128) - 1;
 
     IOracle public immutable referenceOracle;
-    IRebalancer public immutable rebalancer;
+    ILiquidityVault public immutable liquidityVault;
     IBookManager public immutable bookManager;
 
     mapping(address => bool) public isOperator;
@@ -42,9 +42,11 @@ contract SimpleOracleStrategy is ISimpleOracleStrategy, Ownable2Step, UUPSUpgrad
         _;
     }
 
-    constructor(IOracle referenceOracle_, IRebalancer rebalancer_, IBookManager bookManager_) Ownable(msg.sender) {
+    constructor(IOracle referenceOracle_, ILiquidityVault liquidityVault_, IBookManager bookManager_)
+        Ownable(msg.sender)
+    {
         referenceOracle = referenceOracle_;
-        rebalancer = rebalancer_;
+        liquidityVault = liquidityVault_;
         bookManager = bookManager_;
     }
 
@@ -74,14 +76,14 @@ contract SimpleOracleStrategy is ISimpleOracleStrategy, Ownable2Step, UUPSUpgrad
 
         IBookManager.BookKey memory bookKeyA;
         IBookManager.BookKey memory bookKeyB;
-        IRebalancer.Liquidity memory liquidityA;
-        IRebalancer.Liquidity memory liquidityB;
+        ILiquidityVault.Liquidity memory liquidityA;
+        ILiquidityVault.Liquidity memory liquidityB;
         {
-            (BookId bookIdA, BookId bookIdB) = rebalancer.getBookPairs(key);
+            (BookId bookIdA, BookId bookIdB) = liquidityVault.getBookPairs(key);
             bookKeyA = bookManager.getBookKey(bookIdA);
             bookKeyB = bookManager.getBookKey(bookIdB);
 
-            (liquidityA, liquidityB) = rebalancer.getLiquidity(key);
+            (liquidityA, liquidityB) = liquidityVault.getLiquidity(key);
 
             if (
                 (_lastAmountA[key] > 0 || _lastAmountB[key] > 0)
@@ -174,7 +176,7 @@ contract SimpleOracleStrategy is ISimpleOracleStrategy, Ownable2Step, UUPSUpgrad
         Config memory config = _configs[key];
         Position memory position = _positions[key];
 
-        (BookId bookIdA,) = rebalancer.getBookPairs(key);
+        (BookId bookIdA,) = liquidityVault.getBookPairs(key);
 
         IBookManager.BookKey memory bookKeyA = bookManager.getBookKey(bookIdA);
 
@@ -240,7 +242,7 @@ contract SimpleOracleStrategy is ISimpleOracleStrategy, Ownable2Step, UUPSUpgrad
                 || oraclePrice * (RATE_PRECISION - config.priceThresholdB) / RATE_PRECISION > priceB
         ) revert ExceedsThreshold();
 
-        (BookId bookIdA, BookId bookIdB) = rebalancer.getBookPairs(key);
+        (BookId bookIdA, BookId bookIdB) = liquidityVault.getBookPairs(key);
         IBookManager.BookKey memory bookKeyA = bookManager.getBookKey(bookIdA);
         priceA = bookKeyA.makerPolicy.usesQuote()
             ? uint256(int256(priceA) + bookKeyA.makerPolicy.calculateFee(priceA, false))
@@ -297,11 +299,11 @@ contract SimpleOracleStrategy is ISimpleOracleStrategy, Ownable2Step, UUPSUpgrad
     }
 
     function mintHook(address, bytes32, uint256, uint256) external view {
-        if (msg.sender != address(rebalancer)) revert InvalidAccess();
+        if (msg.sender != address(liquidityVault)) revert InvalidAccess();
     }
 
     function burnHook(address, bytes32 key, uint256 burnAmount, uint256 lastTotalSupply) external {
-        if (msg.sender != address(rebalancer)) revert InvalidAccess();
+        if (msg.sender != address(liquidityVault)) revert InvalidAccess();
         _lastAmountA[key] -= _lastAmountA[key] * burnAmount / lastTotalSupply;
         _lastAmountB[key] -= _lastAmountB[key] * burnAmount / lastTotalSupply;
     }
@@ -309,7 +311,7 @@ contract SimpleOracleStrategy is ISimpleOracleStrategy, Ownable2Step, UUPSUpgrad
     function rebalanceHook(address, bytes32 key, Order[] memory, Order[] memory, uint256 amountA, uint256 amountB)
         external
     {
-        if (msg.sender != address(rebalancer)) revert InvalidAccess();
+        if (msg.sender != address(liquidityVault)) revert InvalidAccess();
         _lastAmountA[key] = amountA;
         _lastAmountB[key] = amountB;
     }

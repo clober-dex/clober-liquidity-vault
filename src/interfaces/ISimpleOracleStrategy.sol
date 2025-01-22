@@ -7,7 +7,7 @@ import {IBookManager} from "clober-dex/v2-core/interfaces/IBookManager.sol";
 
 import {IStrategy} from "./IStrategy.sol";
 import {IOracle} from "./IOracle.sol";
-import "./IRebalancer.sol";
+import "./ILiquidityVault.sol";
 
 interface ISimpleOracleStrategy is IStrategy {
     error InvalidPrice();

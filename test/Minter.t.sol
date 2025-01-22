@@ -23,7 +23,7 @@ contract MinterTest is Test {
     IBookManager.BookKey public keyA;
     IBookManager.BookKey public keyB;
     bytes32 public key;
-    Rebalancer public rebalancer;
+    LiquidityVault public liquidityVault;
     OpenRouter public cloberOpenRouter;
     MockOracle public oracle;
     TakeRouter public takeRouter;
@@ -41,12 +41,13 @@ contract MinterTest is Test {
         tokenA = new MockERC20("Token A", "TKA", 18);
         tokenB = new MockERC20("Token B", "TKB", 18);
 
-        address rebalancerTemplate = address(new Rebalancer(bookManager, 100, "Liquidity Vault", "LV"));
-        rebalancer = Rebalancer(
+        address liquidityVaultTemplate = address(new LiquidityVault(bookManager, 100, "Liquidity Vault", "LV"));
+        liquidityVault = LiquidityVault(
             payable(
                 address(
                     new ERC1967Proxy(
-                        rebalancerTemplate, abi.encodeWithSelector(Rebalancer.initialize.selector, address(this))
+                        liquidityVaultTemplate,
+                        abi.encodeWithSelector(LiquidityVault.initialize.selector, address(this))
                     )
                 )
             )
@@ -55,7 +56,7 @@ contract MinterTest is Test {
         strategy = SimpleOracleStrategy(
             address(
                 new ERC1967Proxy(
-                    address(new SimpleOracleStrategy(oracle, rebalancer, bookManager)),
+                    address(new SimpleOracleStrategy(oracle, liquidityVault, bookManager)),
                     abi.encodeWithSelector(SimpleOracleStrategy.initialize.selector, address(this))
                 )
             )
@@ -78,7 +79,7 @@ contract MinterTest is Test {
             takerPolicy: FeePolicyLibrary.encode(false, 1200)
         });
 
-        key = rebalancer.open(keyA, keyB, 0x0, address(strategy));
+        key = liquidityVault.open(keyA, keyB, 0x0, address(strategy));
 
         strategy.setConfig(
             key,
@@ -103,7 +104,7 @@ contract MinterTest is Test {
 
         mockSwap = new MockSwap();
 
-        minter = new Minter(address(bookManager), payable(rebalancer), address(mockSwap));
+        minter = new Minter(address(bookManager), payable(liquidityVault), address(mockSwap));
 
         tokenA.mint(address(this), 1e27);
         tokenB.mint(address(this), 1e27);
@@ -111,10 +112,10 @@ contract MinterTest is Test {
         tokenB.mint(address(mockSwap), 1e27);
         tokenA.approve(address(minter), type(uint256).max);
         tokenB.approve(address(minter), type(uint256).max);
-        tokenA.approve(address(rebalancer), type(uint256).max);
-        tokenB.approve(address(rebalancer), type(uint256).max);
+        tokenA.approve(address(liquidityVault), type(uint256).max);
+        tokenB.approve(address(liquidityVault), type(uint256).max);
 
-        rebalancer.mint(key, 1e18, 1e18, 0);
+        liquidityVault.mint(key, 1e18, 1e18, 0);
     }
 
     function _setReferencePrices(uint256 priceA, uint256 priceB) internal {
@@ -125,10 +126,10 @@ contract MinterTest is Test {
     function testMintWithoutSwapParams() public {
         IMinter.SwapParams memory swapParams;
 
-        uint256 beforeLpBalance = rebalancer.balanceOf(address(this), uint256(key));
+        uint256 beforeLpBalance = liquidityVault.balanceOf(address(this), uint256(key));
         minter.mint(key, 1e18, 1e18, 0, emptyParams, emptyParams, swapParams);
 
-        assertEq(rebalancer.balanceOf(address(this), uint256(key)), beforeLpBalance + 1e18);
+        assertEq(liquidityVault.balanceOf(address(this), uint256(key)), beforeLpBalance + 1e18);
     }
 
     function testMintWithSwap() public {
@@ -138,9 +139,9 @@ contract MinterTest is Test {
             data: abi.encodeWithSelector(mockSwap.swap.selector, address(tokenA), 1e18, address(tokenB), 1e18)
         });
 
-        uint256 beforeLpBalance = rebalancer.balanceOf(address(this), uint256(key));
+        uint256 beforeLpBalance = liquidityVault.balanceOf(address(this), uint256(key));
         minter.mint(key, 2e18, 0, 0, emptyParams, emptyParams, swapParams);
 
-        assertEq(rebalancer.balanceOf(address(this), uint256(key)), beforeLpBalance + 1e18);
+        assertEq(liquidityVault.balanceOf(address(this), uint256(key)), beforeLpBalance + 1e18);
     }
 }

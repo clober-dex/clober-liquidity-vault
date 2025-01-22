@@ -9,7 +9,7 @@ import "solmate/test/utils/mocks/MockERC20.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
 import "../src/SimpleOracleStrategy.sol";
-import "../src/interfaces/IRebalancer.sol";
+import "../src/interfaces/ILiquidityVault.sol";
 import "./mocks/MockOracle.sol";
 import "./mocks/OpenRouter.sol";
 
@@ -63,7 +63,7 @@ contract SimpleOracleStrategyTest is Test {
         strategy = SimpleOracleStrategy(
             address(
                 new ERC1967Proxy(
-                    address(new SimpleOracleStrategy(oracle, IRebalancer(address(this)), bookManager)),
+                    address(new SimpleOracleStrategy(oracle, ILiquidityVault(address(this)), bookManager)),
                     abi.encodeWithSelector(SimpleOracleStrategy.initialize.selector, address(this))
                 )
             )
@@ -313,11 +313,11 @@ contract SimpleOracleStrategyTest is Test {
     function getLiquidity(bytes32)
         public
         view
-        returns (IRebalancer.Liquidity memory liquidityA, IRebalancer.Liquidity memory liquidityB)
+        returns (ILiquidityVault.Liquidity memory liquidityA, ILiquidityVault.Liquidity memory liquidityB)
     {
         return (
-            IRebalancer.Liquidity({reserve: reserveA, claimable: 0, cancelable: cancelableA}),
-            IRebalancer.Liquidity({reserve: reserveB, claimable: 0, cancelable: cancelableB})
+            ILiquidityVault.Liquidity({reserve: reserveA, claimable: 0, cancelable: cancelableA}),
+            ILiquidityVault.Liquidity({reserve: reserveB, claimable: 0, cancelable: cancelableB})
         );
     }
 }

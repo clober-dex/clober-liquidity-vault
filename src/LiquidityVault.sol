@@ -18,12 +18,12 @@ import {Tick, TickLibrary} from "clober-dex/v2-core/libraries/Tick.sol";
 import {FeePolicy, FeePolicyLibrary} from "clober-dex/v2-core/libraries/FeePolicy.sol";
 import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
 
-import {IRebalancer} from "./interfaces/IRebalancer.sol";
+import {ILiquidityVault} from "./interfaces/ILiquidityVault.sol";
 import {IStrategy} from "./interfaces/IStrategy.sol";
 import {ERC6909Supply} from "./libraries/ERC6909Supply.sol";
 
-contract Rebalancer is
-    IRebalancer,
+contract LiquidityVault is
+    ILiquidityVault,
     ILocker,
     Ownable2Step,
     ERC6909Supply,

@@ -10,12 +10,12 @@ contract Minter is IMinter {
     using SafeERC20 for IERC20;
 
     IBookManager public immutable bookManager;
-    Rebalancer public immutable rebalancer;
+    LiquidityVault public immutable liquidityVault;
     address public immutable router;
 
-    constructor(address _bookManager, address payable _rebalancer, address _router) {
+    constructor(address _bookManager, address payable _liquidityVault, address _router) {
         bookManager = IBookManager(_bookManager);
-        rebalancer = Rebalancer(_rebalancer);
+        liquidityVault = LiquidityVault(_liquidityVault);
         router = _router;
     }
 
@@ -28,7 +28,7 @@ contract Minter is IMinter {
         ERC20PermitParams calldata currencyBPermitParams,
         SwapParams calldata swapParams
     ) external payable {
-        (BookId bookIdA,) = rebalancer.getBookPairs(key);
+        (BookId bookIdA,) = liquidityVault.getBookPairs(key);
         IBookManager.BookKey memory bookKey = IBookManager(bookManager).getBookKey(bookIdA);
 
         currencyAPermitParams.tryPermit(Currency.unwrap(bookKey.quote), msg.sender, address(this));
@@ -48,7 +48,7 @@ contract Minter is IMinter {
 
         uint256 lpAmount = _mint(key, bookKey.quote, bookKey.base, minLpAmount);
 
-        rebalancer.transfer(msg.sender, uint256(key), lpAmount);
+        liquidityVault.transfer(msg.sender, uint256(key), lpAmount);
 
         uint256 balance = bookKey.quote.balanceOfSelf();
         if (balance > 0) bookKey.quote.transfer(msg.sender, balance);
@@ -72,11 +72,11 @@ contract Minter is IMinter {
     {
         uint256 quoteBalance = quote.balanceOfSelf();
         uint256 baseBalance = base.balanceOfSelf();
-        _approve(quote, address(rebalancer), quoteBalance);
-        _approve(base, address(rebalancer), baseBalance);
-        lpAmount = rebalancer.mint{value: address(this).balance}(key, quoteBalance, baseBalance, minLpAmount);
-        _approve(quote, address(rebalancer), 0);
-        _approve(base, address(rebalancer), 0);
+        _approve(quote, address(liquidityVault), quoteBalance);
+        _approve(base, address(liquidityVault), baseBalance);
+        lpAmount = liquidityVault.mint{value: address(this).balance}(key, quoteBalance, baseBalance, minLpAmount);
+        _approve(quote, address(liquidityVault), 0);
+        _approve(base, address(liquidityVault), 0);
     }
 
     function _approve(Currency currency, address spender, uint256 amount) internal {

@@ -9,18 +9,18 @@ import {Initializable} from "@openzeppelin/contracts/proxy/utils/Initializable.s
 import {Currency, CurrencyLibrary} from "clober-dex/v2-core/libraries/Currency.sol";
 
 import "./interfaces/ISimpleOracleStrategy.sol";
-import "./interfaces/IRebalancer.sol";
+import "./interfaces/ILiquidityVault.sol";
 import {IDatastreamOracle} from "./interfaces/IDatastreamOracle.sol";
 
 contract Operator is UUPSUpgradeable, Initializable, Ownable2Step {
     using CurrencyLibrary for Currency;
 
-    IRebalancer public immutable rebalancer;
+    ILiquidityVault public immutable liquidityVault;
     IDatastreamOracle public immutable datastreamOracle;
     uint256 public requestFeeAmount;
 
-    constructor(IRebalancer rebalancer_, IDatastreamOracle datastreamOracle_) Ownable(msg.sender) {
-        rebalancer = rebalancer_;
+    constructor(ILiquidityVault liquidityVault_, IDatastreamOracle datastreamOracle_) Ownable(msg.sender) {
+        liquidityVault = liquidityVault_;
         datastreamOracle = datastreamOracle_;
     }
 
@@ -32,17 +32,17 @@ contract Operator is UUPSUpgradeable, Initializable, Ownable2Step {
     function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
     function updatePosition(bytes32 key, uint256 oraclePrice, Tick tickA, Tick tickB, uint24 rate) external onlyOwner {
-        ISimpleOracleStrategy oracleStrategy = ISimpleOracleStrategy(address(rebalancer.getPool(key).strategy));
+        ISimpleOracleStrategy oracleStrategy = ISimpleOracleStrategy(address(liquidityVault.getPool(key).strategy));
         if (oracleStrategy.isPaused(key)) {
             oracleStrategy.unpause(key);
         }
         oracleStrategy.updatePosition(key, oraclePrice, tickA, tickB, rate);
-        rebalancer.rebalance(key);
+        liquidityVault.rebalance(key);
     }
 
     function pause(bytes32 key) external onlyOwner {
-        ISimpleOracleStrategy(address(rebalancer.getPool(key).strategy)).pause(key);
-        rebalancer.rebalance(key);
+        ISimpleOracleStrategy(address(liquidityVault.getPool(key).strategy)).pause(key);
+        liquidityVault.rebalance(key);
     }
 
     function requestOraclePublic() external {

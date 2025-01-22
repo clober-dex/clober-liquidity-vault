@@ -3,7 +3,7 @@
 pragma solidity ^0.8.0;
 
 import "../libraries/PermitParams.sol";
-import "../Rebalancer.sol";
+import "../LiquidityVault.sol";
 
 interface IMinter {
     error RouterSwapFailed(bytes message);
@@ -14,11 +14,11 @@ interface IMinter {
         bytes data;
     }
 
-    /// @notice Returns the IBookManager contract used by the Rebalancer.
+    /// @notice Returns the IBookManager contract used by the LiquidityVault.
     function bookManager() external view returns (IBookManager);
 
-    /// @notice Returns the Rebalancer contract.
-    function rebalancer() external view returns (Rebalancer);
+    /// @notice Returns the LiquidityVault contract.
+    function liquidityVault() external view returns (LiquidityVault);
 
     /// @notice Returns the router contract address used for performing swaps before minting.
     function router() external view returns (address);
@@ -26,8 +26,8 @@ interface IMinter {
     /// @notice Mints liquidity using the specified parameters, optionally performing a swap beforehand.
     /// @dev
     ///  1. Optionally calls `router` with `swapParams` if `inCurrency` is non-zero and `amount` > 0.
-    ///  2. Approves tokens for Rebalancer and calls `mint()` on behalf of the user.
-    /// @param key A unique key representing the liquidity pool in the Rebalancer.
+    ///  2. Approves tokens for LiquidityVault and calls `mint()` on behalf of the user.
+    /// @param key A unique key representing the liquidity pool in the LiquidityVault.
     /// @param amountA The amount of token A to add as liquidity.
     /// @param amountB The amount of token B to add as liquidity.
     /// @param minLpAmount The minimum LP tokens the user is willing to receive; reverts if slippage is too high.
