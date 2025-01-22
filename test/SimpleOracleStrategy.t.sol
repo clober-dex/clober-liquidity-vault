@@ -240,7 +240,7 @@ contract SimpleOracleStrategyTest is Test {
         oracle.setValidity(false);
 
         vm.expectRevert(abi.encodeWithSelector(ISimpleOracleStrategy.InvalidOraclePrice.selector));
-        (IStrategy.Order[] memory ordersA, IStrategy.Order[] memory ordersB) = strategy.computeOrders(key);
+        strategy.computeOrders(key);
     }
 
     function testPause() public {

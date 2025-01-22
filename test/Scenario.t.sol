@@ -183,9 +183,9 @@ contract ScenarioTest is Test {
 
         _updatePosition(1000000);
         while (true) {
-            (, IRebalancer.Liquidity memory liquidityB) = rebalancer.getLiquidity(key);
+            (, IRebalancer.Liquidity memory lqB) = rebalancer.getLiquidity(key);
 
-            if (liquidityB.cancelable == 0) {
+            if (lqB.cancelable == 0) {
                 break;
             }
 
@@ -223,8 +223,6 @@ contract ScenarioTest is Test {
         assertEq(liquidityB.reserve, 3000000);
         _updatePosition(1000000);
         for (uint256 i = 0; i < 20; ++i) {
-            (IRebalancer.Liquidity memory liquidityA,) = rebalancer.getLiquidity(key);
-
             _spend(100000000000000);
             oraclePrice = oraclePrice - 10;
             _updatePosition(1000000);
