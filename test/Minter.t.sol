@@ -14,7 +14,6 @@ import "../src/SimpleOracleStrategy.sol";
 import "./mocks/OpenRouter.sol";
 import "./mocks/MockOracle.sol";
 import "../src/mocks/MockSwap.sol";
-import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
 contract MinterTest is Test {
     IBookManager public bookManager;

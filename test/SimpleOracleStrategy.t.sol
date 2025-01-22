@@ -6,12 +6,12 @@ import "forge-std/Test.sol";
 
 import "clober-dex/v2-core/BookManager.sol";
 import "solmate/test/utils/mocks/MockERC20.sol";
+import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
 import "../src/SimpleOracleStrategy.sol";
 import "../src/interfaces/IRebalancer.sol";
 import "./mocks/MockOracle.sol";
 import "./mocks/OpenRouter.sol";
-import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
 contract SimpleOracleStrategyTest is Test {
     using BookIdLibrary for IBookManager.BookKey;
@@ -240,7 +240,7 @@ contract SimpleOracleStrategyTest is Test {
         oracle.setValidity(false);
 
         vm.expectRevert(abi.encodeWithSelector(ISimpleOracleStrategy.InvalidOraclePrice.selector));
-        (IStrategy.Order[] memory ordersA, IStrategy.Order[] memory ordersB) = strategy.computeOrders(key);
+        strategy.computeOrders(key);
     }
 
     function testPause() public {
