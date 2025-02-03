@@ -54,7 +54,12 @@ const loadPrivateKeyFromKeyfile = () => {
     }
   }
 
-  const prodNetworks = new Set<number>([networkInfos.mainnet.id, networkInfos.arbitrum.id, networkInfos.base.id])
+  const prodNetworks = new Set<number>([
+    networkInfos.mainnet.id,
+    networkInfos.arbitrum.id,
+    networkInfos.base.id,
+    networkInfos.sonic.id,
+  ])
   if (network && prodNetworks.has(network)) {
     if (privateKey) {
       return privateKey
@@ -94,6 +99,20 @@ const config: HardhatConfig = {
   },
   defaultNetwork: 'hardhat',
   networks: {
+    [networkInfos.sonic.id]: {
+      url: networkInfos.sonic.rpcUrls.default.http[0],
+      chainId: networkInfos.sonic.id,
+      accounts: [loadPrivateKeyFromKeyfile()],
+      gas: 'auto',
+      gasPrice: 'auto',
+      gasMultiplier: 1,
+      timeout: 3000000,
+      httpHeaders: {},
+      live: true,
+      saveDeployments: true,
+      tags: ['mainnet', 'prod'],
+      companionNetworks: {},
+    },
     [networkInfos.berachainTestnet.id]: {
       url: networkInfos.berachainTestnet.rpcUrls.default.http[0],
       chainId: networkInfos.berachainTestnet.id,
@@ -216,6 +235,7 @@ const config: HardhatConfig = {
       sepolia: process.env.ARBISCAN_API_KEY ?? '',
       arbitrumSepolia: process.env.ARBISCAN_API_KEY ?? '',
       [networkInfos.berachainTestnet.id]: 'berachainArtio',
+      [networkInfos.sonic.id]: process.env.SONIC_API_KEY ?? '',
     },
     customChains: [
       {
@@ -224,6 +244,14 @@ const config: HardhatConfig = {
         urls: {
           apiURL: 'https://api.routescan.io/v2/network/testnet/evm/80085/etherscan',
           browserURL: 'https://artio.beratrail.io/',
+        },
+      },
+      {
+        network: networkInfos.sonic.id.toString(),
+        chainId: networkInfos.sonic.id,
+        urls: {
+          apiURL: 'https://api.sonicscan.org/api',
+          browserURL: 'https://sonicscan.org/',
         },
       },
     ],

@@ -3,7 +3,7 @@ import { DeployFunction } from 'hardhat-deploy/types'
 import { deployWithVerify, BOOK_MANAGER, SAFE_WALLET } from '../utils'
 import { getChain } from '@nomicfoundation/hardhat-viem/internal/chains'
 import { Address } from 'viem'
-import { arbitrumSepolia, base } from 'viem/chains'
+import { arbitrumSepolia, base, sonic } from 'viem/chains'
 
 const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts, network } = hre
@@ -14,7 +14,7 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
     return
   }
 
-  const rebalancer = await deployments.get('Rebalancer')
+  const rebalancer = await deployments.get('LiquidityVault')
 
   let oracleAddress: Address = '0x'
   let owner: Address = '0x'
@@ -23,6 +23,9 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
     owner = deployer
   } else if (chain.id === base.id) {
     oracleAddress = (await deployments.get('DatastreamOracle')).address as Address
+    owner = SAFE_WALLET[chain.id] // Safe
+  } else if (chain.id == sonic.id) {
+    oracleAddress = (await deployments.get('ChainlinkOracle')).address as Address
     owner = SAFE_WALLET[chain.id] // Safe
   } else {
     throw new Error('Unknown chain')
@@ -41,5 +44,5 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
 }
 
 deployFunction.tags = ['SimpleOracleStrategy']
-deployFunction.dependencies = ['Oracle', 'Rebalancer']
+deployFunction.dependencies = ['Oracle', 'LiquidityVault']
 export default deployFunction

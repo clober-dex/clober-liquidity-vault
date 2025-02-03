@@ -13,11 +13,11 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
 
   await deployWithVerify(hre, 'Minter', [
     BOOK_MANAGER[chain.id],
-    await getDeployedAddress('Rebalancer'),
+    await getDeployedAddress('LiquidityVault'),
     MINTER_ROUTER[chain.id],
   ])
 }
 
 deployFunction.tags = ['Minter']
-deployFunction.dependencies = ['Rebalancer']
+deployFunction.dependencies = ['LiquidityVault']
 export default deployFunction

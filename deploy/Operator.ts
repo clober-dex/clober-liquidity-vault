@@ -2,8 +2,8 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { deployWithVerify, getDeployedAddress } from '../utils'
 import { getChain, isDevelopmentNetwork } from '@nomicfoundation/hardhat-viem/internal/chains'
-import { Address } from 'viem'
-import { base } from 'viem/chains'
+import { Address, zeroAddress } from 'viem'
+import { base, sonic } from 'viem/chains'
 
 const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts, network } = hre
@@ -24,11 +24,15 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
     owner = '0x872251F2C0cC5699c9e0C226371c4D747fDA247f' // bot address
     datastreamOracle = await getDeployedAddress('DatastreamOracle')
     feeAmount = 10n ** 18n / 20n
+  } else if (chain.id === sonic.id) {
+    owner = '0x872251F2C0cC5699c9e0C226371c4D747fDA247f' // bot address
+    datastreamOracle = zeroAddress
+    feeAmount = 0n
   } else {
     throw new Error('Unknown chain')
   }
 
-  await deployWithVerify(hre, 'Operator', [await getDeployedAddress('Rebalancer'), datastreamOracle], {
+  await deployWithVerify(hre, 'Operator', [await getDeployedAddress('LiquidityVault'), datastreamOracle], {
     proxy: {
       proxyContract: 'UUPS',
       execute: {
@@ -40,5 +44,5 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
 }
 
 deployFunction.tags = ['Operator']
-deployFunction.dependencies = ['Rebalancer', 'Oracle']
+deployFunction.dependencies = ['LiquidityVault', 'Oracle']
 export default deployFunction

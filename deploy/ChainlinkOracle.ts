@@ -1,9 +1,15 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { DeployFunction } from 'hardhat-deploy/types'
-import { deployWithVerify, CHAINLINK_SEQUENCER_ORACLE, ORACLE_TIMEOUT, SEQUENCER_GRACE_PERIOD } from '../utils'
+import {
+  deployWithVerify,
+  CHAINLINK_SEQUENCER_ORACLE,
+  ORACLE_TIMEOUT,
+  SEQUENCER_GRACE_PERIOD,
+  SAFE_WALLET,
+} from '../utils'
 import { getChain } from '@nomicfoundation/hardhat-viem/internal/chains'
 import { Address } from 'viem'
-import { arbitrumSepolia, base } from 'viem/chains'
+import { arbitrumSepolia, base, sonic } from 'viem/chains'
 
 const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, network } = hre
@@ -16,6 +22,8 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
   let owner: Address = '0x'
   if (chain.id == arbitrumSepolia.id || chain.id == base.id) {
     return
+  } else if (chain.id == sonic.id) {
+    owner = SAFE_WALLET[chain.id]
   } else {
     throw new Error('Unknown chain')
   }
