@@ -25,7 +25,7 @@
     },
     {
       "inputs": [],
-      "name": "AlreadySetFeed",
+      "name": "DifferentPrecision",
       "type": "error"
     },
     {
@@ -1002,7 +1002,7 @@
       "0xfb976Bae0b3Ef71843F1c6c63da7Df2e44B3836d"
     ]
   },
-  "implementation": "0xEabaa084Bea2d8201a0472aF0EBAe5e4C6914641",
+  "implementation": "0x6317cD56C4ea4C6Ee2E7abA91A7aF0a98000Bb0F",
   "devdoc": {
     "details": "This contract implements an upgradeable proxy. It is upgradeable because calls are delegated to an implementation address that can be changed. This address is stored in storage in the location specified by https://eips.ethereum.org/EIPS/eip-1967[EIP1967], so that it doesn't conflict with the storage layout of the implementation behind the proxy.",
     "kind": "dev",
