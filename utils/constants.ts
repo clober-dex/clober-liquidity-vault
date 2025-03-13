@@ -1,10 +1,11 @@
-import { arbitrum, arbitrumSepolia, base, berachainTestnet, sonic } from 'viem/chains'
+import { arbitrum, arbitrumSepolia, base, berachainTestnet, monadTestnet, sonic } from 'viem/chains'
 import { Address, zeroAddress } from 'viem'
 
 export const MINTER_ROUTER: { [chainId: number]: Address } = {
   [base.id]: '0x19ceead7105607cd444f5ad10dd51356436095a1',
   [arbitrumSepolia.id]: '0x05CdebC6D5c70804b28BFf6E99096B565b858ccb',
   [sonic.id]: '0xaC041Df48dF9791B0654f1Dbbf2CC8450C5f2e9D',
+  [monadTestnet.id]: '0x7792669BEb769c4035bdFcA4F3d794d55922B954',
 }
 
 export const BOOK_MANAGER: { [chainId: number]: Address } = {
@@ -12,6 +13,7 @@ export const BOOK_MANAGER: { [chainId: number]: Address } = {
   [base.id]: '0x382CCccbD3b142D7DA063bF68cd0c89634767F76',
   [berachainTestnet.id]: '0x982c57388101D012846aDC4997E9b073F3bC16BD',
   [sonic.id]: '0xD4aD5Ed9E1436904624b6dB8B1BE31f36317C636',
+  [monadTestnet.id]: '0xAA9575d63dFC224b9583fC303dB3188C08d5C85A',
 }
 
 export const CHAINLINK_SEQUENCER_ORACLE: { [chainId: number]: Address } = {
@@ -19,6 +21,7 @@ export const CHAINLINK_SEQUENCER_ORACLE: { [chainId: number]: Address } = {
   [arbitrum.id]: '0xFdB631F5EE196F0ed6FAa767959853A9F217697D',
   [arbitrumSepolia.id]: '0x8B0f27aDf87E037B53eF1AADB96bE629Be37CeA8',
   [sonic.id]: zeroAddress, // L1, no oracle
+  [monadTestnet.id]: zeroAddress,
 }
 
 export const ORACLE_TIMEOUT: { [chainId: number]: number } = {
@@ -26,6 +29,7 @@ export const ORACLE_TIMEOUT: { [chainId: number]: number } = {
   [arbitrum.id]: 24 * 3600,
   [arbitrumSepolia.id]: 24 * 3600,
   [sonic.id]: 24 * 3600,
+  [monadTestnet.id]: 24 * 3600,
 }
 
 export const SAFE_WALLET: { [chainId: number]: Address } = {
@@ -39,4 +43,5 @@ export const SEQUENCER_GRACE_PERIOD: { [chainId: number]: number } = {
   [arbitrum.id]: 3600,
   [arbitrumSepolia.id]: 3600,
   [sonic.id]: 3600,
+  [monadTestnet.id]: 3600,
 }

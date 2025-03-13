@@ -9,11 +9,12 @@ import {
 } from '../utils'
 import { getChain } from '@nomicfoundation/hardhat-viem/internal/chains'
 import { Address } from 'viem'
-import { arbitrumSepolia, base, sonic } from 'viem/chains'
+import { arbitrumSepolia, base, monadTestnet, sonic } from 'viem/chains'
 
 const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  const { deployments, network } = hre
+  const { getNamedAccounts, deployments, network } = hre
   const chain = await getChain(network.provider)
+  const deployer = (await getNamedAccounts())['deployer'] as Address
 
   if (await deployments.getOrNull('ChainlinkOracle')) {
     return
@@ -24,6 +25,8 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
     return
   } else if (chain.id == sonic.id) {
     owner = SAFE_WALLET[chain.id]
+  } else if (chain.id == monadTestnet.id) {
+    owner = deployer
   } else {
     throw new Error('Unknown chain')
   }

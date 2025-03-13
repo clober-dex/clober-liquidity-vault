@@ -141,6 +141,20 @@ const config: HardhatConfig = {
       tags: ['testnet', 'test'],
       companionNetworks: {},
     },
+    [networkInfos.monadTestnet.id]: {
+      url: networkInfos.monadTestnet.rpcUrls.default.http[0],
+      chainId: networkInfos.monadTestnet.id,
+      accounts: process.env.DEV_PRIVATE_KEY ? [process.env.DEV_PRIVATE_KEY] : [],
+      gas: 'auto',
+      gasPrice: 'auto',
+      gasMultiplier: 1,
+      timeout: 3000000,
+      httpHeaders: {},
+      live: true,
+      saveDeployments: true,
+      tags: ['testnet', 'test'],
+      companionNetworks: {},
+    },
     [networkInfos.arbitrum.id]: {
       url: networkInfos.arbitrum.rpcUrls.default.http[0],
       chainId: networkInfos.arbitrum.id,
@@ -236,6 +250,7 @@ const config: HardhatConfig = {
       arbitrumSepolia: process.env.ARBISCAN_API_KEY ?? '',
       [networkInfos.berachainTestnet.id]: 'berachainArtio',
       [networkInfos.sonic.id]: process.env.SONIC_API_KEY ?? '',
+      [networkInfos.monadTestnet.id]: 'dummy',
     },
     customChains: [
       {
@@ -252,6 +267,14 @@ const config: HardhatConfig = {
         urls: {
           apiURL: 'https://api.sonicscan.org/api',
           browserURL: 'https://sonicscan.org/',
+        },
+      },
+      {
+        network: networkInfos.monadTestnet.id.toString(),
+        chainId: networkInfos.monadTestnet.id,
+        urls: {
+          apiURL: 'https://sourcify-api-monad.blockvision.org',
+          browserURL: 'https://testnet.monadexplorer.com',
         },
       },
     ],

@@ -3,7 +3,7 @@ import { DeployFunction } from 'hardhat-deploy/types'
 import { deployWithVerify, SAFE_WALLET } from '../utils'
 import { getChain } from '@nomicfoundation/hardhat-viem/internal/chains'
 import { Address } from 'viem'
-import { arbitrumSepolia, base, sonic } from 'viem/chains'
+import { arbitrumSepolia, base, monadTestnet, sonic } from 'viem/chains'
 
 const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts, network } = hre
@@ -22,7 +22,7 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
   } else if (chain.id === base.id) {
     owner = owner = SAFE_WALLET[chain.id] // Safe
     datastreamVerifier = '0xDE1A28D87Afd0f546505B28AB50410A5c3a7387a'
-  } else if (chain.id === sonic.id) {
+  } else if (chain.id === sonic.id || chain.id === monadTestnet.id) {
     return
   } else {
     throw new Error('Unknown chain')
