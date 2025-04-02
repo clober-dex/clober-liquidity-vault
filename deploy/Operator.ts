@@ -26,7 +26,7 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
     datastreamOracle = zeroAddress
     feeAmount = 0n
   } else if (chain.id === monadTestnet.id) {
-    owner = '0x872251F2C0cC5699c9e0C226371c4D747fDA247f' // bot address
+    owner = deployer
     datastreamOracle = zeroAddress
     feeAmount = 0n
   } else {
