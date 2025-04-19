@@ -26,6 +26,7 @@ interface ILiquidityVault {
     error InvalidStrategy();
     error InvalidBookPair();
     error AlreadyOpened();
+    error NotOpened();
     error InvalidLockAcquiredSender();
     error InvalidLockCaller();
     error LockFailure();

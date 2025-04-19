@@ -2,57 +2,30 @@
   "address": "0x46107Ec44112675689053b96aea2127fD952bd47",
   "abi": [
     {
-      "anonymous": false,
       "inputs": [
         {
-          "indexed": false,
-          "internalType": "address",
-          "name": "previousAdmin",
+          "internalType": "contract IBookManager",
+          "name": "bookManager_",
           "type": "address"
         },
         {
-          "indexed": false,
-          "internalType": "address",
-          "name": "newAdmin",
-          "type": "address"
-        }
-      ],
-      "name": "AdminChanged",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
+          "internalType": "uint256",
+          "name": "burnFeeRate_",
+          "type": "uint256"
+        },
         {
-          "indexed": true,
-          "internalType": "address",
-          "name": "beacon",
-          "type": "address"
-        }
-      ],
-      "name": "BeaconUpgraded",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
+          "internalType": "string",
+          "name": "name_",
+          "type": "string"
+        },
         {
-          "indexed": true,
-          "internalType": "address",
-          "name": "implementation",
-          "type": "address"
+          "internalType": "string",
+          "name": "symbol_",
+          "type": "string"
         }
       ],
-      "name": "Upgraded",
-      "type": "event"
-    },
-    {
-      "stateMutability": "payable",
-      "type": "fallback"
-    },
-    {
-      "stateMutability": "payable",
-      "type": "receive"
+      "stateMutability": "nonpayable",
+      "type": "constructor"
     },
     {
       "inputs": [
@@ -159,6 +132,11 @@
     {
       "inputs": [],
       "name": "NotInitializing",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "NotOpened",
       "type": "error"
     },
     {
@@ -594,6 +572,19 @@
         }
       ],
       "name": "Transfer",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "implementation",
+          "type": "address"
+        }
+      ],
+      "name": "Upgraded",
       "type": "event"
     },
     {
@@ -1569,20 +1560,8 @@
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_logic",
-          "type": "address"
-        },
-        {
-          "internalType": "bytes",
-          "name": "_data",
-          "type": "bytes"
-        }
-      ],
       "stateMutability": "payable",
-      "type": "constructor"
+      "type": "receive"
     }
   ],
   "transactionHash": "0xc5bb64a669677e53cf8c5e1b8ec89a1aa2ce232ceccdbde5cab9556c830bde4c",
@@ -1656,7 +1635,7 @@
       "0xDE4e00082c6Bd350F197693a5d485121201B0e11"
     ]
   },
-  "implementation": "0x9bb7d556A4eB463b213135dF3184303cbDD52E1D",
+  "implementation": "0xAd4515a7443F063263C6bB507670e5Dc27632815",
   "devdoc": {
     "details": "This contract implements an upgradeable proxy. It is upgradeable because calls are delegated to an implementation address that can be changed. This address is stored in storage in the location specified by https://eips.ethereum.org/EIPS/eip-1967[EIP1967], so that it doesn't conflict with the storage layout of the implementation behind the proxy.",
     "kind": "dev",

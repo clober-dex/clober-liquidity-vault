@@ -148,6 +148,7 @@ contract LiquidityVault is
         nonReentrant
         returns (uint256 mintAmount)
     {
+        _checkOpened(key);
         Pool storage pool = _pools[key];
         IBookManager.BookKey memory bookKeyA = bookManager.getBookKey(pool.bookIdA);
 
@@ -231,6 +232,7 @@ contract LiquidityVault is
         nonReentrant
         returns (uint256 withdrawalA, uint256 withdrawalB)
     {
+        _checkOpened(key);
         (withdrawalA, withdrawalB) = abi.decode(
             bookManager.lock(address(this), abi.encodeWithSelector(this._burn.selector, key, msg.sender, amount)),
             (uint256, uint256)
@@ -239,6 +241,7 @@ contract LiquidityVault is
     }
 
     function rebalance(bytes32 key) external nonReentrant {
+        _checkOpened(key);
         bookManager.lock(address(this), abi.encodeWithSelector(this._rebalance.selector, key));
     }
 
@@ -433,6 +436,10 @@ contract LiquidityVault is
     function _encodeKey(BookId bookIdA, BookId bookIdB, bytes32 salt) internal pure returns (bytes32) {
         if (BookId.unwrap(bookIdA) > BookId.unwrap(bookIdB)) (bookIdA, bookIdB) = (bookIdB, bookIdA);
         return keccak256(abi.encodePacked(bookIdA, bookIdB, salt));
+    }
+
+    function _checkOpened(bytes32 key) internal view {
+        if (_pools[key].strategy == IStrategy(address(0))) revert NotOpened();
     }
 
     receive() external payable {}
