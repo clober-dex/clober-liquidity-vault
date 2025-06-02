@@ -17,21 +17,21 @@ task('strategy:config').setAction(async (_, hre) => {
       const res = await strategy.write.setConfig([
         config,
         {
-        referenceThreshold: 10000,
-        rebalanceThreshold: 50000,
-        rateA: 1000000,
-        rateB: 1000000,
-        minRateA: 3000,
-        minRateB: 3000,
-        priceThresholdA: 10000,
+          referenceThreshold: 10000,
+          rebalanceThreshold: 50000,
+          rateA: 1000000,
+          rateB: 1000000,
+          minRateA: 3000,
+          minRateB: 3000,
+          priceThresholdA: 10000,
           priceThresholdB: 10000,
-        }
-      ]);
-      console.log(`Set config for pool ${config}: ${res}`);
+        },
+      ])
+      console.log(`Set config for pool ${config}: ${res}`)
     } else {
       console.log(`Pool ${config} registered: ${remoteConfig.rebalanceThreshold > 0}`)
     }
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000))
   }
 })
 
@@ -41,15 +41,16 @@ task('operator:set').setAction(async (_, hre) => {
 
   const operators: `0x${string}`[] = [
     // todo: add operators
-  ];
+  ]
 
   for (const operatorAddress of operators) {
     if (!(await operator.read.isOperator([operatorAddress]))) {
-      const res = await operator.write.setOperator([operatorAddress, true]);
-      console.log(`Registered operator ${operatorAddress} with tx:`, res);
+      const res = await operator.write.setOperator([operatorAddress, true])
+      console.log(`Registered operator ${operatorAddress} with tx:`, res)
     } else {
-      console.log(`${operatorAddress} is already an operator`);
+      console.log(`${operatorAddress} is already an operator`)
     }
+    await new Promise((resolve) => setTimeout(resolve, 1000))
   }
 
   for (const operatorAddress of operators) {

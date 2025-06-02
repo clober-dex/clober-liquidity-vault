@@ -23,7 +23,7 @@ contract ScenarioTest is Test {
     Minter public minter;
     IERC20 public quote;
     IDatastreamOracle public datastreamOracle;
-    ILiquidityVault public liquidityVault;
+    LiquidityVault public liquidityVault;
     ISimpleOracleStrategy public strategy;
     IController public controller;
     IBookManager public bookManager;
@@ -45,12 +45,13 @@ contract ScenarioTest is Test {
             payable(
                 address(
                     new ERC1967Proxy(
-                        address(new LiquidityVault(bookManager, 100, "Liquidity Vault", "LV")),
+                        address(new LiquidityVault(bookManager, 100)),
                         abi.encodeWithSelector(LiquidityVault.initialize.selector, owner)
                     )
                 )
             )
         );
+        liquidityVault.initializeMetadata("Liquidity Vault", "LV", "ETH");
 
         operator = Operator(
             address(

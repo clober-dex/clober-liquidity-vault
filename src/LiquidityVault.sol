@@ -47,29 +47,54 @@ contract LiquidityVault is
     mapping(bytes32 key => Pool) private _pools;
     mapping(BookId => BookId) public bookPair;
     mapping(Currency => uint256) public fees;
-    string public name;
-    string public symbol;
+    string public nameTemplate;
+    string public symbolTemplate;
+    string public nativeSymbol;
 
     modifier selfOnly() {
         if (msg.sender != address(this)) revert NotSelf();
         _;
     }
 
-    constructor(IBookManager bookManager_, uint256 burnFeeRate_, string memory name_, string memory symbol_)
-        Ownable(msg.sender)
-    {
+    constructor(IBookManager bookManager_, uint256 burnFeeRate_) Ownable(msg.sender) {
         if (burnFeeRate_ >= RATE_PRECISION) revert InvalidRate();
         bookManager = bookManager_;
         burnFeeRate = burnFeeRate_;
-        name = name_;
-        symbol = symbol_;
     }
 
     function initialize(address initialOwner) external initializer {
         _transferOwnership(initialOwner);
     }
 
+    function initializeMetadata(string memory nameTemplate_, string memory symbolTemplate_, string memory nativeSymbol_)
+        external
+        onlyOwner
+    {
+        require(bytes(nameTemplate).length == 0);
+        require(bytes(symbolTemplate).length == 0);
+        nameTemplate = nameTemplate_;
+        symbolTemplate = symbolTemplate_;
+        nativeSymbol = nativeSymbol_;
+    }
+
     function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
+
+    function name(uint256 id) external view returns (string memory) {
+        (string memory quoteSymbol, string memory baseSymbol) = _getPairSymbols(id);
+        return string.concat(nameTemplate, " ", quoteSymbol, "-", baseSymbol);
+    }
+
+    function symbol(uint256 id) external view returns (string memory) {
+        (string memory quoteSymbol, string memory baseSymbol) = _getPairSymbols(id);
+        return string.concat(symbolTemplate, "-", quoteSymbol, "-", baseSymbol);
+    }
+
+    function _getPairSymbols(uint256 id) internal view returns (string memory quoteSymbol, string memory baseSymbol) {
+        IBookManager.BookKey memory bookKeyA = bookManager.getBookKey(_pools[bytes32(id)].bookIdA);
+        quoteSymbol =
+            bookKeyA.quote.isNative() ? nativeSymbol : IERC20Metadata(Currency.unwrap(bookKeyA.quote)).symbol();
+        baseSymbol = bookKeyA.base.isNative() ? nativeSymbol : IERC20Metadata(Currency.unwrap(bookKeyA.base)).symbol();
+    }
 
     function decimals(uint256) external pure returns (uint8) {
         return 18;
