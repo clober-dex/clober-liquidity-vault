@@ -15,40 +15,34 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
   }
 
   let owner: Address = '0x'
-  let name: string = ''
-  let symbol: string = ''
+  let nameTemplate: string = ''
+  let symbolTemplate: string = ''
   let nativeSymbol: string = chain.nativeCurrency.symbol
   if (chain.testnet || isDevelopmentNetwork(chain.id)) {
     owner = deployer
-    name = 'Clober Liquidity Vault'
-    symbol = 'CLV'
+    nameTemplate = 'Clober Liquidity Vault'
+    symbolTemplate = 'CLV'
   } else if (chain.id === arbitrum.id || chain.id === base.id) {
     owner = SAFE_WALLET[chain.id] // Safe
-    name = 'Clober Liquidity Vault'
-    symbol = 'CLV'
+    nameTemplate = 'Clober Liquidity Vault'
+    symbolTemplate = 'CLV'
   } else if (chain.id === sonic.id) {
     owner = SAFE_WALLET[chain.id] // Safe
-    name = 'Sonic Market Liquidity Vault'
-    symbol = 'SLV'
+    nameTemplate = 'Sonic Market Liquidity Vault'
+    symbolTemplate = 'SLV'
   } else {
     throw new Error('Unknown chain')
   }
 
-  const vaultAddress = await deployWithVerify(hre, 'LiquidityVault', [BOOK_MANAGER[chain.id], 100], {
+  await deployWithVerify(hre, 'LiquidityVault', [BOOK_MANAGER[chain.id], 100], {
     proxy: {
       proxyContract: 'UUPS',
       execute: {
-        methodName: 'initialize',
-        args: [owner],
+        methodName: 'initializeMetadata',
+        args: [nameTemplate, symbolTemplate, nativeSymbol],
       },
     },
   })
-
-  const vault = await hre.viem.getContractAt('LiquidityVault', vaultAddress as Address)
-  if ((await vault.read.nameTemplate()) === '') {
-    const tx = await vault.write.initializeMetadata([name, symbol, nativeSymbol])
-    console.log(`Initialized metadata for vault ${vaultAddress}: ${tx}`)
-  }
 }
 
 deployFunction.tags = ['LiquidityVault']
