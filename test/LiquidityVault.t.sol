@@ -36,7 +36,7 @@ contract LiquidityVaultTest is Test {
         tokenA = new MockERC20("Token A", "TKA", 18);
         tokenB = new MockERC20("Token B", "TKB", 18);
 
-        address liquidityVaultTemplate = address(new LiquidityVault(bookManager, 100, "Liquidity Vault", "LV"));
+        address liquidityVaultTemplate = address(new LiquidityVault(bookManager, 100));
         liquidityVault = LiquidityVault(
             payable(
                 address(
@@ -47,6 +47,7 @@ contract LiquidityVaultTest is Test {
                 )
             )
         );
+        liquidityVault.initializeMetadata("Liquidity Vault", "LV", "ETH");
 
         strategy = new MockStrategy();
 
@@ -466,6 +467,91 @@ contract LiquidityVaultTest is Test {
         vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, address(0x123)));
         vm.prank(address(0x123));
         liquidityVault.collect(Currency.wrap(address(tokenA)), address(0x3333));
+    }
+
+    function testName() public {
+        // Test with the existing key (TKA-TKB pair)
+        string memory expectedName = "Liquidity Vault TKB-TKA";
+        string memory actualName = liquidityVault.name(uint256(key));
+        assertEq(actualName, expectedName, "NAME_MISMATCH");
+    }
+
+    function testSymbol() public {
+        // Test with the existing key (TKA-TKB pair)
+        string memory expectedSymbol = "LV-TKB-TKA";
+        string memory actualSymbol = liquidityVault.symbol(uint256(key));
+        assertEq(actualSymbol, expectedSymbol, "SYMBOL_MISMATCH");
+    }
+
+    function testNameWithDifferentTokenPair() public {
+        // Create new tokens with different symbols
+        MockERC20 tokenC = new MockERC20("Token C", "TKC", 18);
+        MockERC20 tokenD = new MockERC20("Token D", "TKD", 6);
+
+        IBookManager.BookKey memory keyC = IBookManager.BookKey({
+            base: Currency.wrap(address(tokenD)),
+            unitSize: 1e12,
+            quote: Currency.wrap(address(tokenC)),
+            makerPolicy: FeePolicyLibrary.encode(true, -1000),
+            hooks: IHooks(address(0)),
+            takerPolicy: FeePolicyLibrary.encode(true, 1200)
+        });
+        IBookManager.BookKey memory keyD = IBookManager.BookKey({
+            base: Currency.wrap(address(tokenC)),
+            unitSize: 1e12,
+            quote: Currency.wrap(address(tokenD)),
+            makerPolicy: FeePolicyLibrary.encode(false, -1000),
+            hooks: IHooks(address(0)),
+            takerPolicy: FeePolicyLibrary.encode(false, 1200)
+        });
+
+        bytes32 newKey = liquidityVault.open(keyC, keyD, bytes32(uint256(0x1)), address(strategy));
+
+        string memory expectedName = "Liquidity Vault TKD-TKC";
+        string memory actualName = liquidityVault.name(uint256(newKey));
+        assertEq(actualName, expectedName, "NAME_WITH_DIFFERENT_PAIR");
+
+        string memory expectedSymbol = "LV-TKD-TKC";
+        string memory actualSymbol = liquidityVault.symbol(uint256(newKey));
+        assertEq(actualSymbol, expectedSymbol, "SYMBOL_WITH_DIFFERENT_PAIR");
+    }
+
+    function testNameAndSymbolWithNativeToken() public {
+        // Create a pair with native token
+        MockERC20 tokenE = new MockERC20("Token E", "TKE", 18);
+
+        IBookManager.BookKey memory keyWithNative1 = IBookManager.BookKey({
+            base: Currency.wrap(address(tokenE)),
+            unitSize: 1e12,
+            quote: CurrencyLibrary.NATIVE,
+            makerPolicy: FeePolicyLibrary.encode(true, -1000),
+            hooks: IHooks(address(0)),
+            takerPolicy: FeePolicyLibrary.encode(true, 1200)
+        });
+        IBookManager.BookKey memory keyWithNative2 = IBookManager.BookKey({
+            base: CurrencyLibrary.NATIVE,
+            unitSize: 1e12,
+            quote: Currency.wrap(address(tokenE)),
+            makerPolicy: FeePolicyLibrary.encode(false, -1000),
+            hooks: IHooks(address(0)),
+            takerPolicy: FeePolicyLibrary.encode(false, 1200)
+        });
+
+        bytes32 nativeKey =
+            liquidityVault.open(keyWithNative1, keyWithNative2, bytes32(uint256(0x2)), address(strategy));
+
+        string memory expectedName = "Liquidity Vault TKE-ETH";
+        string memory actualName = liquidityVault.name(uint256(nativeKey));
+        assertEq(actualName, expectedName, "NAME_WITH_NATIVE");
+
+        string memory expectedSymbol = "LV-TKE-ETH";
+        string memory actualSymbol = liquidityVault.symbol(uint256(nativeKey));
+        assertEq(actualSymbol, expectedSymbol, "SYMBOL_WITH_NATIVE");
+    }
+
+    function testDecimals() public view {
+        uint8 decimals = liquidityVault.decimals(uint256(key));
+        assertEq(decimals, 18, "DECIMALS_SHOULD_BE_18");
     }
 
     receive() external payable {}

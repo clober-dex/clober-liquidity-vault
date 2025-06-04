@@ -15,8 +15,9 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
   }
 
   let owner: Address = '0x'
-  let name: String = ''
-  let symbol: String = ''
+  let name: string = ''
+  let symbol: string = ''
+  let nativeSymbol: string = chain.nativeCurrency.symbol
   if (chain.testnet || isDevelopmentNetwork(chain.id)) {
     owner = deployer
     name = 'Clober Liquidity Vault'
@@ -33,7 +34,7 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
     throw new Error('Unknown chain')
   }
 
-  await deployWithVerify(hre, 'LiquidityVault', [BOOK_MANAGER[chain.id], 100, name, symbol], {
+  const vaultAddress = await deployWithVerify(hre, 'LiquidityVault', [BOOK_MANAGER[chain.id], 100], {
     proxy: {
       proxyContract: 'UUPS',
       execute: {
@@ -42,6 +43,12 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
       },
     },
   })
+
+  const vault = await hre.viem.getContractAt('LiquidityVault', vaultAddress as Address)
+  if ((await vault.read.nameTemplate()) === '') {
+    const tx = await vault.write.initializeMetadata([name, symbol, nativeSymbol])
+    console.log(`Initialized metadata for vault ${vaultAddress}: ${tx}`)
+  }
 }
 
 deployFunction.tags = ['LiquidityVault']

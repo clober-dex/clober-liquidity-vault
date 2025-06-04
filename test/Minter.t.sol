@@ -41,7 +41,7 @@ contract MinterTest is Test {
         tokenA = new MockERC20("Token A", "TKA", 18);
         tokenB = new MockERC20("Token B", "TKB", 18);
 
-        address liquidityVaultTemplate = address(new LiquidityVault(bookManager, 100, "Liquidity Vault", "LV"));
+        address liquidityVaultTemplate = address(new LiquidityVault(bookManager, 100));
         liquidityVault = LiquidityVault(
             payable(
                 address(
@@ -52,6 +52,7 @@ contract MinterTest is Test {
                 )
             )
         );
+        liquidityVault.initializeMetadata("Liquidity Vault", "LV", "ETH");
 
         strategy = SimpleOracleStrategy(
             address(
