@@ -81,12 +81,12 @@ contract LiquidityVault is
 
     function name(uint256 id) external view returns (string memory) {
         (string memory quoteSymbol, string memory baseSymbol) = _getPairSymbols(id);
-        return string.concat(nameTemplate, " ", quoteSymbol, "-", baseSymbol);
+        return string.concat(nameTemplate, " ", baseSymbol, "-", quoteSymbol);
     }
 
     function symbol(uint256 id) external view returns (string memory) {
         (string memory quoteSymbol, string memory baseSymbol) = _getPairSymbols(id);
-        return string.concat(symbolTemplate, "-", quoteSymbol, "-", baseSymbol);
+        return string.concat(symbolTemplate, "-", baseSymbol, "-", quoteSymbol);
     }
 
     function _getPairSymbols(uint256 id) internal view returns (string memory quoteSymbol, string memory baseSymbol) {

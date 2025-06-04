@@ -471,14 +471,14 @@ contract LiquidityVaultTest is Test {
 
     function testName() public {
         // Test with the existing key (TKA-TKB pair)
-        string memory expectedName = "Liquidity Vault TKA-TKB";
+        string memory expectedName = "Liquidity Vault TKB-TKA";
         string memory actualName = liquidityVault.name(uint256(key));
         assertEq(actualName, expectedName, "NAME_MISMATCH");
     }
 
     function testSymbol() public {
         // Test with the existing key (TKA-TKB pair)
-        string memory expectedSymbol = "LV-TKA-TKB";
+        string memory expectedSymbol = "LV-TKB-TKA";
         string memory actualSymbol = liquidityVault.symbol(uint256(key));
         assertEq(actualSymbol, expectedSymbol, "SYMBOL_MISMATCH");
     }
@@ -507,11 +507,11 @@ contract LiquidityVaultTest is Test {
 
         bytes32 newKey = liquidityVault.open(keyC, keyD, bytes32(uint256(0x1)), address(strategy));
 
-        string memory expectedName = "Liquidity Vault TKC-TKD";
+        string memory expectedName = "Liquidity Vault TKD-TKC";
         string memory actualName = liquidityVault.name(uint256(newKey));
         assertEq(actualName, expectedName, "NAME_WITH_DIFFERENT_PAIR");
 
-        string memory expectedSymbol = "LV-TKC-TKD";
+        string memory expectedSymbol = "LV-TKD-TKC";
         string memory actualSymbol = liquidityVault.symbol(uint256(newKey));
         assertEq(actualSymbol, expectedSymbol, "SYMBOL_WITH_DIFFERENT_PAIR");
     }
@@ -540,11 +540,11 @@ contract LiquidityVaultTest is Test {
         bytes32 nativeKey =
             liquidityVault.open(keyWithNative1, keyWithNative2, bytes32(uint256(0x2)), address(strategy));
 
-        string memory expectedName = "Liquidity Vault ETH-TKE";
+        string memory expectedName = "Liquidity Vault TKE-ETH";
         string memory actualName = liquidityVault.name(uint256(nativeKey));
         assertEq(actualName, expectedName, "NAME_WITH_NATIVE");
 
-        string memory expectedSymbol = "LV-ETH-TKE";
+        string memory expectedSymbol = "LV-TKE-ETH";
         string memory actualSymbol = liquidityVault.symbol(uint256(nativeKey));
         assertEq(actualSymbol, expectedSymbol, "SYMBOL_WITH_NATIVE");
     }
