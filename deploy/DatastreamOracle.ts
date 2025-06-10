@@ -16,13 +16,17 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
 
   let owner: Address = '0x'
   let datastreamVerifier: Address = '0x'
-  if (chain.id === arbitrumSepolia.id) {
-    owner = deployer
-    datastreamVerifier = '0x2ff010debc1297f19579b4246cad07bd24f2488a'
-  } else if (chain.id === base.id) {
+  // if (chain.id === arbitrumSepolia.id) {
+  //   owner = deployer
+  //   datastreamVerifier = '0x2ff010debc1297f19579b4246cad07bd24f2488a'
+  if (chain.id === base.id) {
     owner = owner = SAFE_WALLET[chain.id] // Safe
     datastreamVerifier = '0xDE1A28D87Afd0f546505B28AB50410A5c3a7387a'
-  } else if (chain.id === sonic.id || chain.id === monadTestnet.id) {
+  } else if (
+    chain.id === sonic.id ||
+    chain.id === monadTestnet.id ||
+    chain.id === arbitrumSepolia.id
+  ) {
     return
   } else {
     throw new Error('Unknown chain')

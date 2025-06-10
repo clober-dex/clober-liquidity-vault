@@ -1,5 +1,5 @@
 {
-  "address": "0x32d70eF6BFb7055dAC25B1FC05f201cD055796C1",
+  "address": "0x66cAF16C9f154a7d967D660812272cb83FFC3AA6",
   "abi": [
     {
       "anonymous": false,
@@ -66,6 +66,11 @@
       "type": "error"
     },
     {
+      "inputs": [],
+      "name": "AlreadyOpened",
+      "type": "error"
+    },
+    {
       "inputs": [
         {
           "internalType": "address",
@@ -93,7 +98,57 @@
     },
     {
       "inputs": [],
+      "name": "InvalidAmount",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidBookPair",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidHook",
+      "type": "error"
+    },
+    {
+      "inputs": [],
       "name": "InvalidInitialization",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidLockAcquiredSender",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidLockCaller",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidRate",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidStrategy",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidTick",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidValue",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "LockFailure",
       "type": "error"
     },
     {
@@ -108,7 +163,12 @@
     },
     {
       "inputs": [],
-      "name": "NotOperator",
+      "name": "NotOpened",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "NotSelf",
       "type": "error"
     },
     {
@@ -135,6 +195,43 @@
     },
     {
       "inputs": [],
+      "name": "ReentrancyGuardReentrantCall",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint8",
+          "name": "bits",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint256",
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "SafeCastOverflowedUintDowncast",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        }
+      ],
+      "name": "SafeERC20FailedOperation",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "Slippage",
+      "type": "error"
+    },
+    {
+      "inputs": [],
       "name": "UUPSUnauthorizedCallContext",
       "type": "error"
     },
@@ -153,6 +250,161 @@
       "anonymous": false,
       "inputs": [
         {
+          "indexed": true,
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "spender",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "Approval",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "key",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "lpAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amountA",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amountB",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "feeA",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "feeB",
+          "type": "uint256"
+        }
+      ],
+      "name": "Burn",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "key",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "canceledAmountA",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "canceledAmountB",
+          "type": "uint256"
+        }
+      ],
+      "name": "Cancel",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "key",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "claimedAmountA",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "claimedAmountB",
+          "type": "uint256"
+        }
+      ],
+      "name": "Claim",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "Currency",
+          "name": "currency",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "Collect",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
           "indexed": false,
           "internalType": "uint64",
           "name": "version",
@@ -160,6 +412,105 @@
         }
       ],
       "name": "Initialized",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "key",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amountA",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amountB",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "lpAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "Mint",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "key",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "BookId",
+          "name": "bookIdA",
+          "type": "uint192"
+        },
+        {
+          "indexed": true,
+          "internalType": "BookId",
+          "name": "bookIdB",
+          "type": "uint192"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "salt",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "strategy",
+          "type": "address"
+        }
+      ],
+      "name": "Open",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "operator",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "approved",
+          "type": "bool"
+        }
+      ],
+      "name": "OperatorSet",
       "type": "event"
     },
     {
@@ -205,19 +556,63 @@
       "inputs": [
         {
           "indexed": true,
+          "internalType": "bytes32",
+          "name": "key",
+          "type": "bytes32"
+        }
+      ],
+      "name": "Rebalance",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
           "internalType": "address",
-          "name": "operator",
+          "name": "caller",
           "type": "address"
         },
         {
+          "indexed": true,
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
           "indexed": false,
-          "internalType": "bool",
-          "name": "status",
-          "type": "bool"
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
         }
       ],
-      "name": "SetOperator",
+      "name": "Transfer",
       "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "RATE_PRECISION",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
     },
     {
       "inputs": [],
@@ -233,6 +628,151 @@
       "type": "function"
     },
     {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "key",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "burnAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "_burn",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "withdrawalA",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "withdrawalB",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "Currency",
+              "name": "base",
+              "type": "address"
+            },
+            {
+              "internalType": "uint64",
+              "name": "unitSize",
+              "type": "uint64"
+            },
+            {
+              "internalType": "Currency",
+              "name": "quote",
+              "type": "address"
+            },
+            {
+              "internalType": "FeePolicy",
+              "name": "makerPolicy",
+              "type": "uint24"
+            },
+            {
+              "internalType": "contract IHooks",
+              "name": "hooks",
+              "type": "address"
+            },
+            {
+              "internalType": "FeePolicy",
+              "name": "takerPolicy",
+              "type": "uint24"
+            }
+          ],
+          "internalType": "struct IBookManager.BookKey",
+          "name": "bookKeyA",
+          "type": "tuple"
+        },
+        {
+          "components": [
+            {
+              "internalType": "Currency",
+              "name": "base",
+              "type": "address"
+            },
+            {
+              "internalType": "uint64",
+              "name": "unitSize",
+              "type": "uint64"
+            },
+            {
+              "internalType": "Currency",
+              "name": "quote",
+              "type": "address"
+            },
+            {
+              "internalType": "FeePolicy",
+              "name": "makerPolicy",
+              "type": "uint24"
+            },
+            {
+              "internalType": "contract IHooks",
+              "name": "hooks",
+              "type": "address"
+            },
+            {
+              "internalType": "FeePolicy",
+              "name": "takerPolicy",
+              "type": "uint24"
+            }
+          ],
+          "internalType": "struct IBookManager.BookKey",
+          "name": "bookKeyB",
+          "type": "tuple"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "salt",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "strategy",
+          "type": "address"
+        }
+      ],
+      "name": "_open",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "key",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "key",
+          "type": "bytes32"
+        }
+      ],
+      "name": "_rebalance",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
       "inputs": [],
       "name": "acceptOwnership",
       "outputs": [],
@@ -240,13 +780,360 @@
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "datastreamOracle",
-      "outputs": [
+      "inputs": [
         {
-          "internalType": "contract IDatastreamOracle",
+          "internalType": "address",
           "name": "",
           "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "allowance",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "spender",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "approve",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "balanceOf",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "bookManager",
+      "outputs": [
+        {
+          "internalType": "contract IBookManager",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "BookId",
+          "name": "",
+          "type": "uint192"
+        }
+      ],
+      "name": "bookPair",
+      "outputs": [
+        {
+          "internalType": "BookId",
+          "name": "",
+          "type": "uint192"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "key",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minAmountA",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minAmountB",
+          "type": "uint256"
+        }
+      ],
+      "name": "burn",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "withdrawalA",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "withdrawalB",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "burnFeeRate",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "Currency",
+          "name": "currency",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        }
+      ],
+      "name": "collect",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "decimals",
+      "outputs": [
+        {
+          "internalType": "uint8",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "Currency",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "fees",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "key",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getBookPairs",
+      "outputs": [
+        {
+          "internalType": "BookId",
+          "name": "",
+          "type": "uint192"
+        },
+        {
+          "internalType": "BookId",
+          "name": "",
+          "type": "uint192"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "key",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getLiquidity",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "reserve",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "claimable",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "cancelable",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct ILiquidityVault.Liquidity",
+          "name": "liquidityA",
+          "type": "tuple"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "reserve",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "claimable",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "cancelable",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct ILiquidityVault.Liquidity",
+          "name": "liquidityB",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "key",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getPool",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "BookId",
+              "name": "bookIdA",
+              "type": "uint192"
+            },
+            {
+              "internalType": "BookId",
+              "name": "bookIdB",
+              "type": "uint192"
+            },
+            {
+              "internalType": "contract IStrategy",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "reserveA",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "reserveB",
+              "type": "uint256"
+            },
+            {
+              "internalType": "OrderId[]",
+              "name": "orderListA",
+              "type": "uint256[]"
+            },
+            {
+              "internalType": "OrderId[]",
+              "name": "orderListB",
+              "type": "uint256[]"
+            }
+          ],
+          "internalType": "struct ILiquidityVault.Pool",
+          "name": "",
+          "type": "tuple"
         }
       ],
       "stateMutability": "view",
@@ -258,11 +1145,6 @@
           "internalType": "address",
           "name": "initialOwner",
           "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "requestFeeAmount_",
-          "type": "uint256"
         }
       ],
       "name": "initialize",
@@ -272,6 +1154,34 @@
     },
     {
       "inputs": [
+        {
+          "internalType": "string",
+          "name": "nameTemplate_",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "symbolTemplate_",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "nativeSymbol_",
+          "type": "string"
+        }
+      ],
+      "name": "initializeMetadata",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
         {
           "internalType": "address",
           "name": "",
@@ -290,16 +1200,204 @@
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "liquidityVault",
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "lockCaller",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes",
+          "name": "data",
+          "type": "bytes"
+        }
+      ],
+      "name": "lockAcquired",
       "outputs": [
         {
-          "internalType": "contract ILiquidityVault",
+          "internalType": "bytes",
           "name": "",
-          "type": "address"
+          "type": "bytes"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "key",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amountA",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amountB",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minLpAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "mint",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "mintAmount",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "name",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
         }
       ],
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "nameTemplate",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "nativeSymbol",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "Currency",
+              "name": "base",
+              "type": "address"
+            },
+            {
+              "internalType": "uint64",
+              "name": "unitSize",
+              "type": "uint64"
+            },
+            {
+              "internalType": "Currency",
+              "name": "quote",
+              "type": "address"
+            },
+            {
+              "internalType": "FeePolicy",
+              "name": "makerPolicy",
+              "type": "uint24"
+            },
+            {
+              "internalType": "contract IHooks",
+              "name": "hooks",
+              "type": "address"
+            },
+            {
+              "internalType": "FeePolicy",
+              "name": "takerPolicy",
+              "type": "uint24"
+            }
+          ],
+          "internalType": "struct IBookManager.BookKey",
+          "name": "bookKeyA",
+          "type": "tuple"
+        },
+        {
+          "components": [
+            {
+              "internalType": "Currency",
+              "name": "base",
+              "type": "address"
+            },
+            {
+              "internalType": "uint64",
+              "name": "unitSize",
+              "type": "uint64"
+            },
+            {
+              "internalType": "Currency",
+              "name": "quote",
+              "type": "address"
+            },
+            {
+              "internalType": "FeePolicy",
+              "name": "makerPolicy",
+              "type": "uint24"
+            },
+            {
+              "internalType": "contract IHooks",
+              "name": "hooks",
+              "type": "address"
+            },
+            {
+              "internalType": "FeePolicy",
+              "name": "takerPolicy",
+              "type": "uint24"
+            }
+          ],
+          "internalType": "struct IBookManager.BookKey",
+          "name": "bookKeyB",
+          "type": "tuple"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "salt",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "strategy",
+          "type": "address"
+        }
+      ],
+      "name": "open",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -313,19 +1411,6 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes32",
-          "name": "key",
-          "type": "bytes32"
-        }
-      ],
-      "name": "pause",
-      "outputs": [],
-      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -355,41 +1440,21 @@
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "renounceOwnership",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "requestFeeAmount",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
       "inputs": [
         {
-          "internalType": "uint256",
-          "name": "bitmap",
-          "type": "uint256"
+          "internalType": "bytes32",
+          "name": "key",
+          "type": "bytes32"
         }
       ],
-      "name": "requestOracle",
+      "name": "rebalance",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
     },
     {
       "inputs": [],
-      "name": "requestOraclePublic",
+      "name": "renounceOwnership",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -403,25 +1468,151 @@
         },
         {
           "internalType": "bool",
-          "name": "status",
+          "name": "approved",
           "type": "bool"
         }
       ],
       "name": "setOperator",
-      "outputs": [],
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
       "stateMutability": "nonpayable",
       "type": "function"
     },
     {
       "inputs": [
         {
+          "internalType": "bytes4",
+          "name": "interfaceId",
+          "type": "bytes4"
+        }
+      ],
+      "name": "supportsInterface",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "uint256",
-          "name": "requestFeeAmount_",
+          "name": "id",
           "type": "uint256"
         }
       ],
-      "name": "setRequestFeeAmount",
-      "outputs": [],
+      "name": "symbol",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "symbolTemplate",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "totalSupply",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "receiver",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "transfer",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "receiver",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "transferFrom",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
       "stateMutability": "nonpayable",
       "type": "function"
     },
@@ -434,39 +1625,6 @@
         }
       ],
       "name": "transferOwnership",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes32",
-          "name": "key",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "uint256",
-          "name": "oraclePrice",
-          "type": "uint256"
-        },
-        {
-          "internalType": "Tick",
-          "name": "tickA",
-          "type": "int24"
-        },
-        {
-          "internalType": "Tick",
-          "name": "tickB",
-          "type": "int24"
-        },
-        {
-          "internalType": "uint24",
-          "name": "rate",
-          "type": "uint24"
-        }
-      ],
-      "name": "updatePosition",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -492,29 +1650,6 @@
     {
       "inputs": [
         {
-          "internalType": "Currency",
-          "name": "currency",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "to",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "withdraw",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "address",
           "name": "_logic",
           "type": "address"
@@ -529,78 +1664,65 @@
       "type": "constructor"
     }
   ],
-  "transactionHash": "0x27748f139e98dd1ce6b33be17b07c7da489bfb6c0783f0e3446025de6535b074",
+  "transactionHash": "0xce2562262cf51349b7ef1ca48a2716912d943972192df239c5fa2cff3e6100d1",
   "receipt": {
     "to": null,
     "from": "0x5F79EE8f8fA862E98201120d83c4eC39D9468D49",
-    "contractAddress": "0x32d70eF6BFb7055dAC25B1FC05f201cD055796C1",
-    "transactionIndex": 1,
-    "gasUsed": "362122",
-    "logsBloom": "0x0000000000000000010020000000000040001000000000000080000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000a000001000000000000000001000400000000000000220000000000000000000800000000010000000000000000000000400000000000000000000800000000000000000000000080000000000000000000000000000000000000400000000000000000000000000000000000001000000000000020000000000000000000000000000000000004000000000000000020000000000000000000000000000000000000000000000000000000040000000000",
-    "blockHash": "0x51bbc73bae2ecd4cc45c2085468c19bd7a1b9ab965bcc87005fd06a0147e10b0",
-    "transactionHash": "0x27748f139e98dd1ce6b33be17b07c7da489bfb6c0783f0e3446025de6535b074",
+    "contractAddress": "0x66cAF16C9f154a7d967D660812272cb83FFC3AA6",
+    "transactionIndex": 3,
+    "gasUsed": "335931",
+    "logsBloom": "0x0000000000000000000000000000000040000000000000000180000000000000010000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000a000001000000000000000000000000000000000000020000000000000000000800000000010000000000000000000000400000000000000000000900000000000000000000000080000000000000000000000000000000000000000000000000000000000020000000000000000000000000000020000000000000000000000020000000000004000000000000000020000000000000000000000000000000000000000000000000000000040000000000",
+    "blockHash": "0x920d399bf3f0c3fca7d6c56d13fa323dbaa17bb13a5894de702735e979bd88e7",
+    "transactionHash": "0xce2562262cf51349b7ef1ca48a2716912d943972192df239c5fa2cff3e6100d1",
     "logs": [
       {
-        "transactionIndex": 1,
-        "blockNumber": 162017029,
-        "transactionHash": "0x27748f139e98dd1ce6b33be17b07c7da489bfb6c0783f0e3446025de6535b074",
-        "address": "0x32d70eF6BFb7055dAC25B1FC05f201cD055796C1",
+        "transactionIndex": 3,
+        "blockNumber": 162016504,
+        "transactionHash": "0xce2562262cf51349b7ef1ca48a2716912d943972192df239c5fa2cff3e6100d1",
+        "address": "0x66cAF16C9f154a7d967D660812272cb83FFC3AA6",
         "topics": [
           "0xbc7cd75a20ee27fd9adebab32041f755214dbc6bffa90cc0225b39da2e5c2d3b",
-          "0x000000000000000000000000d0daf537e653bca7660a0c6baec97068c2b288e3"
+          "0x00000000000000000000000042a8887726e15d167a4b6e44768f25400bca3a7a"
         ],
         "data": "0x",
-        "logIndex": 0,
-        "blockHash": "0x51bbc73bae2ecd4cc45c2085468c19bd7a1b9ab965bcc87005fd06a0147e10b0"
+        "logIndex": 7,
+        "blockHash": "0x920d399bf3f0c3fca7d6c56d13fa323dbaa17bb13a5894de702735e979bd88e7"
       },
       {
-        "transactionIndex": 1,
-        "blockNumber": 162017029,
-        "transactionHash": "0x27748f139e98dd1ce6b33be17b07c7da489bfb6c0783f0e3446025de6535b074",
-        "address": "0x32d70eF6BFb7055dAC25B1FC05f201cD055796C1",
+        "transactionIndex": 3,
+        "blockNumber": 162016504,
+        "transactionHash": "0xce2562262cf51349b7ef1ca48a2716912d943972192df239c5fa2cff3e6100d1",
+        "address": "0x66cAF16C9f154a7d967D660812272cb83FFC3AA6",
         "topics": [
           "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
           "0x0000000000000000000000000000000000000000000000000000000000000000",
           "0x0000000000000000000000005f79ee8f8fa862e98201120d83c4ec39d9468d49"
         ],
         "data": "0x",
-        "logIndex": 1,
-        "blockHash": "0x51bbc73bae2ecd4cc45c2085468c19bd7a1b9ab965bcc87005fd06a0147e10b0"
+        "logIndex": 8,
+        "blockHash": "0x920d399bf3f0c3fca7d6c56d13fa323dbaa17bb13a5894de702735e979bd88e7"
       },
       {
-        "transactionIndex": 1,
-        "blockNumber": 162017029,
-        "transactionHash": "0x27748f139e98dd1ce6b33be17b07c7da489bfb6c0783f0e3446025de6535b074",
-        "address": "0x32d70eF6BFb7055dAC25B1FC05f201cD055796C1",
-        "topics": [
-          "0x1618a22a3b00b9ac70fd5a82f1f5cdd8cb272bd0f1b740ddf7c26ab05881dd5b",
-          "0x0000000000000000000000005f79ee8f8fa862e98201120d83c4ec39d9468d49"
-        ],
-        "data": "0x0000000000000000000000000000000000000000000000000000000000000001",
-        "logIndex": 2,
-        "blockHash": "0x51bbc73bae2ecd4cc45c2085468c19bd7a1b9ab965bcc87005fd06a0147e10b0"
-      },
-      {
-        "transactionIndex": 1,
-        "blockNumber": 162017029,
-        "transactionHash": "0x27748f139e98dd1ce6b33be17b07c7da489bfb6c0783f0e3446025de6535b074",
-        "address": "0x32d70eF6BFb7055dAC25B1FC05f201cD055796C1",
+        "transactionIndex": 3,
+        "blockNumber": 162016504,
+        "transactionHash": "0xce2562262cf51349b7ef1ca48a2716912d943972192df239c5fa2cff3e6100d1",
+        "address": "0x66cAF16C9f154a7d967D660812272cb83FFC3AA6",
         "topics": [
           "0xc7f505b2f371ae2175ee4913f4499e1f2633a7b5936321eed1cdaeb6115181d2"
         ],
         "data": "0x0000000000000000000000000000000000000000000000000000000000000001",
-        "logIndex": 3,
-        "blockHash": "0x51bbc73bae2ecd4cc45c2085468c19bd7a1b9ab965bcc87005fd06a0147e10b0"
+        "logIndex": 9,
+        "blockHash": "0x920d399bf3f0c3fca7d6c56d13fa323dbaa17bb13a5894de702735e979bd88e7"
       }
     ],
-    "blockNumber": 162017029,
-    "cumulativeGasUsed": "362122",
+    "blockNumber": 162016504,
+    "cumulativeGasUsed": "563623",
     "status": 1,
     "byzantium": true
   },
   "args": [
-    "0xd0dAf537E653Bca7660A0C6baeC97068c2B288e3",
-    "0xcd6dc6870000000000000000000000005f79ee8f8fa862e98201120d83c4ec39d9468d490000000000000000000000000000000000000000000000000000000000000000"
+    "0x42a8887726E15D167A4b6E44768F25400BCA3a7A",
+    "0xc4d66de80000000000000000000000005f79ee8f8fa862e98201120d83c4ec39d9468d49"
   ],
   "numDeployments": 1,
   "solcInputHash": "0e89febeebc7444140de8e67c9067d2c",
@@ -610,11 +1732,10 @@
   "execute": {
     "methodName": "initialize",
     "args": [
-      "0x5F79EE8f8fA862E98201120d83c4eC39D9468D49",
-      "0"
+      "0x5F79EE8f8fA862E98201120d83c4eC39D9468D49"
     ]
   },
-  "implementation": "0xd0dAf537E653Bca7660A0C6baeC97068c2B288e3",
+  "implementation": "0x42a8887726E15D167A4b6E44768F25400BCA3a7A",
   "devdoc": {
     "details": "This contract implements an upgradeable proxy. It is upgradeable because calls are delegated to an implementation address that can be changed. This address is stored in storage in the location specified by https://eips.ethereum.org/EIPS/eip-1967[EIP1967], so that it doesn't conflict with the storage layout of the implementation behind the proxy.",
     "kind": "dev",

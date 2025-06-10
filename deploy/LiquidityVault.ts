@@ -34,15 +34,20 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
     throw new Error('Unknown chain')
   }
 
-  await deployWithVerify(hre, 'LiquidityVault', [BOOK_MANAGER[chain.id], 100], {
+  const address = await deployWithVerify(hre, 'LiquidityVault', [BOOK_MANAGER[chain.id], 100], {
     proxy: {
       proxyContract: 'UUPS',
       execute: {
-        methodName: 'initializeMetadata',
-        args: [nameTemplate, symbolTemplate, nativeSymbol],
+        methodName: 'initialize',
+        args: [owner],
       },
     },
   })
+  const vault = await hre.viem.getContractAt('LiquidityVault', address as Address)
+  if ((await vault.read.nameTemplate()) == '') {
+    const tx = await vault.write.initializeMetadata([nameTemplate, symbolTemplate, nativeSymbol])
+    console.log('Initialized metadata', tx)
+  }
 }
 
 deployFunction.tags = ['LiquidityVault']

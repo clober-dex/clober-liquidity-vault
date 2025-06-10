@@ -21,11 +21,11 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
   }
 
   let owner: Address = '0x'
-  if (chain.id == arbitrumSepolia.id || chain.id == base.id) {
+  if (chain.id == base.id) {
     return
   } else if (chain.id == sonic.id) {
     owner = SAFE_WALLET[chain.id]
-  } else if (chain.id == monadTestnet.id) {
+  } else if (chain.id == monadTestnet.id || chain.id == arbitrumSepolia.id) {
     owner = deployer
   } else {
     throw new Error('Unknown chain')

@@ -19,7 +19,7 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
   let oracleAddress: Address = '0x'
   let owner: Address = '0x'
   if (chain.id == arbitrumSepolia.id) {
-    oracleAddress = (await deployments.get('DatastreamOracle')).address as Address
+    oracleAddress = (await deployments.get('ChainlinkOracle')).address as Address
     owner = deployer
   } else if (chain.id === base.id) {
     oracleAddress = (await deployments.get('DatastreamOracle')).address as Address
