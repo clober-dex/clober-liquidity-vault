@@ -6,7 +6,7 @@ export const MINTER_ROUTER: { [chainId: number]: Address } = {
   [base.id]: '0x19ceead7105607cd444f5ad10dd51356436095a1',
   [arbitrumSepolia.id]: '0x08feDaACe14EB141E51282441b05182519D853D1',
   [sonic.id]: '0xaC041Df48dF9791B0654f1Dbbf2CC8450C5f2e9D',
-  [monadTestnet.id]: '0x7792669BEb769c4035bdFcA4F3d794d55922B954',
+  [monadTestnet.id]: '0xfD845859628946B317A78A9250DA251114FbD846',
 }
 
 export const BOOK_MANAGER: { [chainId: number]: Address } = {
