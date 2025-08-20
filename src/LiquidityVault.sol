@@ -267,7 +267,7 @@ contract LiquidityVault is
 
     function rebalance(bytes32 key) external nonReentrant {
         _checkOpened(key);
-        bookManager.lock(address(this), abi.encodeWithSelector(this._rebalance.selector, key));
+        bookManager.lock(address(this), abi.encodeWithSelector(this._rebalance.selector, key, msg.sender));
     }
 
     function lockAcquired(address lockCaller, bytes calldata data) external returns (bytes memory) {
@@ -352,10 +352,10 @@ contract LiquidityVault is
             fees[bookKeyA.base] += feeB;
         }
         emit Burn(user, key, burnAmount, withdrawalA, withdrawalB, feeA, feeB);
-        pool.strategy.burnHook(msg.sender, key, burnAmount, supply);
+        pool.strategy.burnHook(user, key, burnAmount, supply);
     }
 
-    function _rebalance(bytes32 key) public selfOnly {
+    function _rebalance(bytes32 key, address caller) public selfOnly {
         Pool storage pool = _pools[key];
         uint256 reserveA = pool.reserveA;
         uint256 reserveB = pool.reserveB;
