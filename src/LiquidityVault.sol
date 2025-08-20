@@ -372,11 +372,15 @@ contract LiquidityVault is
             uint256 amountA = _setLiquidity(bookKeyA, liquidityA, pool.orderListA);
             uint256 amountB = _setLiquidity(bookKeyB, liquidityB, pool.orderListB);
 
-            pool.reserveA = _settleCurrency(bookKeyA.quote, reserveA);
-            pool.reserveB = _settleCurrency(bookKeyA.base, reserveB);
+            uint256 finalReserveA = _settleCurrency(bookKeyA.quote, reserveA);
+            uint256 finalReserveB = _settleCurrency(bookKeyA.base, reserveB);
+            pool.reserveA = finalReserveA;
+            pool.reserveB = finalReserveB;
 
-            pool.strategy.rebalanceHook(msg.sender, key, liquidityA, liquidityB, amountA, amountB);
-            emit Rebalance(key);
+            pool.strategy.rebalanceHook(caller, key, liquidityA, liquidityB, amountA, amountB);
+            emit Rebalance(
+                key, caller, pool.orderListA, pool.orderListB, amountA, amountB, finalReserveA, finalReserveB
+            );
         } catch {
             _clearPool(key, pool, 1, 1);
 

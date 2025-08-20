@@ -45,7 +45,16 @@ interface ILiquidityVault {
         uint256 feeA,
         uint256 feeB
     );
-    event Rebalance(bytes32 indexed key);
+    event Rebalance(
+        bytes32 indexed key,
+        address indexed caller,
+        OrderId[] orderListA,
+        OrderId[] orderListB,
+        uint256 amountA,
+        uint256 amountB,
+        uint256 reserveA,
+        uint256 reserveB
+    );
     event Claim(bytes32 indexed key, uint256 claimedAmountA, uint256 claimedAmountB);
     event Cancel(bytes32 indexed key, uint256 canceledAmountA, uint256 canceledAmountB);
     event Collect(Currency indexed currency, address indexed to, uint256 amount);
