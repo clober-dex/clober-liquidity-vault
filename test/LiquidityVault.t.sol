@@ -9,6 +9,7 @@ import "clober-dex/v2-core/BookManager.sol";
 import "solmate/test/utils/mocks/MockERC20.sol";
 
 import "../src/LiquidityVault.sol";
+import "../src/interfaces/IStrategy.sol";
 import "./mocks/MockStrategy.sol";
 import "./mocks/TakeRouter.sol";
 
@@ -382,6 +383,15 @@ contract LiquidityVaultTest is Test {
         assertEq(liquidityVault.fees(Currency.wrap(address(tokenB))), 100000000000000000, "FEE_B");
     }
 
+    struct RebalanceEventData {
+        OrderId[] orderListA;
+        OrderId[] orderListB;
+        uint256 amountA;
+        uint256 amountB;
+        uint256 reserveA;
+        uint256 reserveB;
+    }
+
     function testRebalance() public {
         liquidityVault.mint(key, 1e18 + 141231, 1e21 + 241245, 0);
 
@@ -392,18 +402,57 @@ contract LiquidityVaultTest is Test {
         uint256 beforeLiquidityA = liquidityA.reserve + liquidityA.claimable + liquidityA.cancelable;
         uint256 beforeLiquidityB = liquidityB.reserve + liquidityB.claimable + liquidityB.cancelable;
 
-        vm.expectEmit(address(liquidityVault));
-        emit ILiquidityVault.Rebalance(key);
+        // Record logs to capture the actual Rebalance event
+        vm.recordLogs();
         liquidityVault.rebalance(key);
+        Vm.Log[] memory logs = vm.getRecordedLogs();
+
+        RebalanceEventData memory rebalanceEventData;
+        // Find and verify the Rebalance event
+        bool rebalanceEventFound = false;
+        for (uint256 i = 0; i < logs.length; i++) {
+            if (logs[i].topics[0] == ILiquidityVault.Rebalance.selector) {
+                rebalanceEventFound = true;
+                // Just verify that the event was emitted with correct indexed values
+                assertEq(logs[i].topics[1], key, "EVENT_KEY_MISMATCH");
+                assertEq(address(uint160(uint256(logs[i].topics[2]))), address(this), "EVENT_CALLER_MISMATCH");
+                (
+                    rebalanceEventData.orderListA,
+                    rebalanceEventData.orderListB,
+                    rebalanceEventData.amountA,
+                    rebalanceEventData.amountB,
+                    rebalanceEventData.reserveA,
+                    rebalanceEventData.reserveB
+                ) = abi.decode(logs[i].data, (OrderId[], OrderId[], uint256, uint256, uint256, uint256));
+                assertEq(rebalanceEventData.orderListA.length, 1, "ORDER_LIST_A");
+                assertEq(rebalanceEventData.orderListB.length, 1, "ORDER_LIST_B");
+                assertEq(rebalanceEventData.amountA, 9990000000000000, "AMOUNT_A");
+                assertEq(rebalanceEventData.amountB, 10000000000000000, "AMOUNT_B");
+                assertEq(rebalanceEventData.reserveA, 990010000000141231, "RESERVE_A");
+                assertEq(rebalanceEventData.reserveB, 999990000000000241245, "RESERVE_B");
+                break;
+            }
+        }
+        assertTrue(rebalanceEventFound, "REBALANCE_EVENT_NOT_FOUND");
 
         ILiquidityVault.Pool memory afterPool = liquidityVault.getPool(key);
         (liquidityA, liquidityB) = liquidityVault.getLiquidity(key);
         uint256 afterLiquidityA = liquidityA.reserve + liquidityA.claimable + liquidityA.cancelable;
         uint256 afterLiquidityB = liquidityB.reserve + liquidityB.claimable + liquidityB.cancelable;
+        assertEq(afterPool.reserveA, rebalanceEventData.reserveA, "RESERVE_A");
+        assertEq(afterPool.reserveB, rebalanceEventData.reserveB, "RESERVE_B");
+        assertEq(liquidityA.claimable + liquidityA.cancelable, rebalanceEventData.amountA, "AMOUNT_A");
+        assertEq(liquidityB.claimable + liquidityB.cancelable, rebalanceEventData.amountB, "AMOUNT_B");
         assertEq(afterLiquidityA, beforeLiquidityA, "LIQUIDITY_A");
         assertEq(afterLiquidityB, beforeLiquidityB, "LIQUIDITY_B");
-        assertEq(afterPool.orderListA.length, 1, "ORDER_LIST_A");
-        assertEq(afterPool.orderListB.length, 1, "ORDER_LIST_B");
+        assertEq(afterPool.orderListA.length, rebalanceEventData.orderListA.length, "ORDER_LIST_A");
+        assertEq(
+            OrderId.unwrap(afterPool.orderListA[0]), OrderId.unwrap(rebalanceEventData.orderListA[0]), "ORDER_LIST_A_0"
+        );
+        assertEq(afterPool.orderListB.length, rebalanceEventData.orderListB.length, "ORDER_LIST_B");
+        assertEq(
+            OrderId.unwrap(afterPool.orderListB[0]), OrderId.unwrap(rebalanceEventData.orderListB[0]), "ORDER_LIST_B_0"
+        );
     }
 
     function testRebalanceShouldClearOrdersWhenComputeOrdersReverted() public {
@@ -432,19 +481,59 @@ contract LiquidityVaultTest is Test {
 
         takeRouter.take(IBookManager.TakeParams({key: keyA, tick: Tick.wrap(0), maxUnit: 2000}), "");
 
-        vm.expectEmit(address(liquidityVault));
-        emit ILiquidityVault.Rebalance(key);
+        // Record logs to capture the actual Rebalance event
+        vm.recordLogs();
         liquidityVault.rebalance(key);
+        Vm.Log[] memory logs = vm.getRecordedLogs();
+
+        RebalanceEventData memory rebalanceEventData;
+        // Find and verify the Rebalance event
+        bool rebalanceEventFound = false;
+        for (uint256 i = 0; i < logs.length; i++) {
+            if (logs[i].topics[0] == ILiquidityVault.Rebalance.selector) {
+                rebalanceEventFound = true;
+                // Just verify that the event was emitted with correct indexed values
+                assertEq(logs[i].topics[1], key, "EVENT_KEY_MISMATCH");
+                assertEq(address(uint160(uint256(logs[i].topics[2]))), address(this), "EVENT_CALLER_MISMATCH");
+                (
+                    rebalanceEventData.orderListA,
+                    rebalanceEventData.orderListB,
+                    rebalanceEventData.amountA,
+                    rebalanceEventData.amountB,
+                    rebalanceEventData.reserveA,
+                    rebalanceEventData.reserveB
+                ) = abi.decode(logs[i].data, (OrderId[], OrderId[], uint256, uint256, uint256, uint256));
+                assertEq(rebalanceEventData.orderListA.length, 1, "ORDER_LIST_A");
+                assertEq(rebalanceEventData.orderListB.length, 1, "ORDER_LIST_B");
+                assertEq(rebalanceEventData.amountA, 9990000000000000, "AMOUNT_A");
+                assertEq(rebalanceEventData.amountB, 10000000000000000, "AMOUNT_B");
+                assertEq(rebalanceEventData.reserveA, 988012000000141231, "RESERVE_A");
+                assertEq(rebalanceEventData.reserveB, 999992000000000241245, "RESERVE_B");
+                break;
+            }
+        }
+        assertTrue(rebalanceEventFound, "REBALANCE_EVENT_NOT_FOUND");
 
         ILiquidityVault.Pool memory afterPool = liquidityVault.getPool(key);
         (liquidityA, liquidityB) = liquidityVault.getLiquidity(key);
         uint256 afterLiquidityA = liquidityA.reserve + liquidityA.claimable + liquidityA.cancelable;
         uint256 afterLiquidityB = liquidityB.reserve + liquidityB.claimable + liquidityB.cancelable;
-
+        assertEq(afterPool.reserveA, rebalanceEventData.reserveA, "RESERVE_A");
+        assertEq(afterPool.reserveB, rebalanceEventData.reserveB, "RESERVE_B");
+        assertEq(liquidityA.claimable + liquidityA.cancelable, rebalanceEventData.amountA, "AMOUNT_A");
+        assertEq(liquidityB.claimable + liquidityB.cancelable, rebalanceEventData.amountB, "AMOUNT_B");
         assertLt(afterLiquidityA, beforeLiquidityA, "LIQUIDITY_A");
         assertGt(afterLiquidityB, beforeLiquidityB, "LIQUIDITY_B");
         assertEq(tokenA.balanceOf(address(liquidityVault)), afterPool.reserveA, "RESERVE_A");
         assertEq(tokenB.balanceOf(address(liquidityVault)), afterPool.reserveB, "RESERVE_B");
+        assertEq(afterPool.orderListA.length, rebalanceEventData.orderListA.length, "ORDER_LIST_A");
+        assertEq(
+            OrderId.unwrap(afterPool.orderListA[0]), OrderId.unwrap(rebalanceEventData.orderListA[0]), "ORDER_LIST_A_0"
+        );
+        assertEq(afterPool.orderListB.length, rebalanceEventData.orderListB.length, "ORDER_LIST_B");
+        assertEq(
+            OrderId.unwrap(afterPool.orderListB[0]), OrderId.unwrap(rebalanceEventData.orderListB[0]), "ORDER_LIST_B_0"
+        );
     }
 
     function testCollect() public {
@@ -469,14 +558,14 @@ contract LiquidityVaultTest is Test {
         liquidityVault.collect(Currency.wrap(address(tokenA)), address(0x3333));
     }
 
-    function testName() public {
+    function testName() public view {
         // Test with the existing key (TKA-TKB pair)
         string memory expectedName = "Liquidity Vault TKB-TKA";
         string memory actualName = liquidityVault.name(uint256(key));
         assertEq(actualName, expectedName, "NAME_MISMATCH");
     }
 
-    function testSymbol() public {
+    function testSymbol() public view {
         // Test with the existing key (TKA-TKB pair)
         string memory expectedSymbol = "LV-TKB-TKA";
         string memory actualSymbol = liquidityVault.symbol(uint256(key));

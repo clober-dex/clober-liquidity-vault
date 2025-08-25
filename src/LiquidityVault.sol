@@ -267,7 +267,7 @@ contract LiquidityVault is
 
     function rebalance(bytes32 key) external nonReentrant {
         _checkOpened(key);
-        bookManager.lock(address(this), abi.encodeWithSelector(this._rebalance.selector, key));
+        bookManager.lock(address(this), abi.encodeWithSelector(this._rebalance.selector, key, msg.sender));
     }
 
     function lockAcquired(address lockCaller, bytes calldata data) external returns (bytes memory) {
@@ -352,10 +352,10 @@ contract LiquidityVault is
             fees[bookKeyA.base] += feeB;
         }
         emit Burn(user, key, burnAmount, withdrawalA, withdrawalB, feeA, feeB);
-        pool.strategy.burnHook(msg.sender, key, burnAmount, supply);
+        pool.strategy.burnHook(user, key, burnAmount, supply);
     }
 
-    function _rebalance(bytes32 key) public selfOnly {
+    function _rebalance(bytes32 key, address caller) public selfOnly {
         Pool storage pool = _pools[key];
         uint256 reserveA = pool.reserveA;
         uint256 reserveB = pool.reserveB;
@@ -372,11 +372,15 @@ contract LiquidityVault is
             uint256 amountA = _setLiquidity(bookKeyA, liquidityA, pool.orderListA);
             uint256 amountB = _setLiquidity(bookKeyB, liquidityB, pool.orderListB);
 
-            pool.reserveA = _settleCurrency(bookKeyA.quote, reserveA);
-            pool.reserveB = _settleCurrency(bookKeyA.base, reserveB);
+            uint256 finalReserveA = _settleCurrency(bookKeyA.quote, reserveA);
+            uint256 finalReserveB = _settleCurrency(bookKeyA.base, reserveB);
+            pool.reserveA = finalReserveA;
+            pool.reserveB = finalReserveB;
 
-            pool.strategy.rebalanceHook(msg.sender, key, liquidityA, liquidityB, amountA, amountB);
-            emit Rebalance(key);
+            pool.strategy.rebalanceHook(caller, key, liquidityA, liquidityB, amountA, amountB);
+            emit Rebalance(
+                key, caller, pool.orderListA, pool.orderListB, amountA, amountB, finalReserveA, finalReserveB
+            );
         } catch {
             _clearPool(key, pool, 1, 1);
 

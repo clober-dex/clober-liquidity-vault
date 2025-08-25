@@ -34,8 +34,30 @@ interface ILiquidityVault {
     error InvalidValue();
     error Slippage();
 
+    /// @notice Emitted when a new pool is opened
+    /// @param key The unique identifier for the pool
+    /// @param bookIdA The book ID for the first book in the pair
+    /// @param bookIdB The book ID for the second book in the pair
+    /// @param salt The salt value used to generate the unique pool key
+    /// @param strategy The address of the strategy contract for this pool
     event Open(bytes32 indexed key, BookId indexed bookIdA, BookId indexed bookIdB, bytes32 salt, address strategy);
+
+    /// @notice Emitted when liquidity is minted (added) to a pool
+    /// @param user The address of the user who minted liquidity
+    /// @param key The unique identifier for the pool
+    /// @param amountA The amount of token A added to the pool
+    /// @param amountB The amount of token B added to the pool
+    /// @param lpAmount The amount of liquidity provider tokens minted
     event Mint(address indexed user, bytes32 indexed key, uint256 amountA, uint256 amountB, uint256 lpAmount);
+
+    /// @notice Emitted when liquidity is burned (removed) from a pool
+    /// @param user The address of the user who burned liquidity
+    /// @param key The unique identifier for the pool
+    /// @param lpAmount The amount of liquidity provider tokens burned
+    /// @param amountA The amount of token A withdrawn from the pool
+    /// @param amountB The amount of token B withdrawn from the pool
+    /// @param feeA The fee amount charged on token A withdrawal
+    /// @param feeB The fee amount charged on token B withdrawal
     event Burn(
         address indexed user,
         bytes32 indexed key,
@@ -45,9 +67,43 @@ interface ILiquidityVault {
         uint256 feeA,
         uint256 feeB
     );
-    event Rebalance(bytes32 indexed key);
+
+    /// @notice Emitted when a pool is rebalanced according to the strategy
+    /// @param key The unique identifier for the pool
+    /// @param caller The address that initiated the rebalance
+    /// @param orderListA The order IDs for token A after rebalancing
+    /// @param orderListB The order IDs for token B after rebalancing
+    /// @param amountA The amount of token A used in rebalancing
+    /// @param amountB The amount of token B used in rebalancing
+    /// @param reserveA The updated reserve amount of token A
+    /// @param reserveB The updated reserve amount of token B
+    event Rebalance(
+        bytes32 indexed key,
+        address indexed caller,
+        OrderId[] orderListA,
+        OrderId[] orderListB,
+        uint256 amountA,
+        uint256 amountB,
+        uint256 reserveA,
+        uint256 reserveB
+    );
+
+    /// @notice Emitted when claimed amounts are collected from orders
+    /// @param key The unique identifier for the pool
+    /// @param claimedAmountA The amount of token A claimed from orders
+    /// @param claimedAmountB The amount of token B claimed from orders
     event Claim(bytes32 indexed key, uint256 claimedAmountA, uint256 claimedAmountB);
+
+    /// @notice Emitted when orders are canceled and amounts are returned
+    /// @param key The unique identifier for the pool
+    /// @param canceledAmountA The amount of token A returned from canceled orders
+    /// @param canceledAmountB The amount of token B returned from canceled orders
     event Cancel(bytes32 indexed key, uint256 canceledAmountA, uint256 canceledAmountB);
+
+    /// @notice Emitted when fees are collected from the vault
+    /// @param currency The currency (token) for which fees were collected
+    /// @param to The address that received the collected fees
+    /// @param amount The amount of fees collected
     event Collect(Currency indexed currency, address indexed to, uint256 amount);
 
     struct Liquidity {
