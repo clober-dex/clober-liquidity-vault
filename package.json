@@ -26,7 +26,7 @@
   "files": [],
   "devDependencies": {
     "@nomicfoundation/hardhat-foundry": "^1.1.2",
-    "@nomicfoundation/hardhat-verify": "^2.0.12",
+    "@nomicfoundation/hardhat-verify": "^2.0.13",
     "@nomicfoundation/hardhat-viem": "^2.0.6",
     "@openzeppelin/upgrades-core": "^1.34.4",
     "@types/node": "^20.14.12",
