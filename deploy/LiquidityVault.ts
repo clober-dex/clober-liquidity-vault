@@ -4,6 +4,7 @@ import { deployWithVerify, BOOK_MANAGER, SAFE_WALLET } from '../utils'
 import { getChain, isDevelopmentNetwork } from '@nomicfoundation/hardhat-viem/internal/chains'
 import { Address } from 'viem'
 import { arbitrum, base, sonic } from 'viem/chains'
+import { monadPrivateMainnet } from '../utils/chains'
 
 const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts, network } = hre
@@ -22,7 +23,7 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
     owner = deployer
     nameTemplate = 'Clober Liquidity Vault'
     symbolTemplate = 'CLV'
-  } else if (chain.id === arbitrum.id || chain.id === base.id) {
+  } else if (chain.id === arbitrum.id || chain.id === base.id || chain.id === monadPrivateMainnet.id) {
     owner = SAFE_WALLET[chain.id] // Safe
     nameTemplate = 'Clober Liquidity Vault'
     symbolTemplate = 'CLV'
@@ -45,8 +46,12 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
   })
   const vault = await hre.viem.getContractAt('LiquidityVault', address as Address)
   if ((await vault.read.nameTemplate()) == '') {
-    const tx = await vault.write.initializeMetadata([nameTemplate, symbolTemplate, nativeSymbol])
-    console.log('Initialized metadata', tx)
+    if (owner == deployer) {
+      const tx = await vault.write.initializeMetadata([nameTemplate, symbolTemplate, nativeSymbol])
+      console.log('Initialized metadata', tx)
+    } else {
+      console.log('You need to initialize metadata manually')
+    }
   }
 }
 

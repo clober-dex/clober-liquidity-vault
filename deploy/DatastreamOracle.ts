@@ -4,6 +4,7 @@ import { deployWithVerify, SAFE_WALLET } from '../utils'
 import { getChain } from '@nomicfoundation/hardhat-viem/internal/chains'
 import { Address } from 'viem'
 import { arbitrumSepolia, base, monadTestnet, sonic } from 'viem/chains'
+import { monadPrivateMainnet, riseTestnet } from '../utils/chains'
 
 const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts, network } = hre
@@ -25,7 +26,9 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
   } else if (
     chain.id === sonic.id ||
     chain.id === monadTestnet.id ||
-    chain.id === arbitrumSepolia.id
+    chain.id === riseTestnet.id ||
+    chain.id === arbitrumSepolia.id ||
+    chain.id === monadPrivateMainnet.id
   ) {
     return
   } else {

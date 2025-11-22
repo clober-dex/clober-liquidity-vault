@@ -17,6 +17,8 @@ import * as networkInfos from 'viem/chains'
 
 dotenv.config()
 
+import { riseTestnet, monadPrivateMainnet } from './utils/chains'
+
 const chainIdMap: { [key: string]: string } = {}
 for (const [networkName, networkInfo] of Object.entries(networkInfos)) {
   // @ts-ignore
@@ -59,6 +61,7 @@ const loadPrivateKeyFromKeyfile = () => {
     networkInfos.arbitrum.id,
     networkInfos.base.id,
     networkInfos.sonic.id,
+    monadPrivateMainnet.id,
   ])
   if (network && prodNetworks.has(network)) {
     if (privateKey) {
@@ -155,6 +158,20 @@ const config: HardhatConfig = {
       tags: ['testnet', 'test'],
       companionNetworks: {},
     },
+    [riseTestnet.name]: {
+      url: riseTestnet.rpcUrls.default.http[0],
+      chainId: riseTestnet.id,
+      accounts: process.env.DEV_PRIVATE_KEY ? [process.env.DEV_PRIVATE_KEY] : [],
+      gas: 'auto',
+      gasPrice: 'auto',
+      gasMultiplier: 1,
+      timeout: 3000000,
+      httpHeaders: {},
+      live: true,
+      saveDeployments: true,
+      tags: ['testnet', 'test'],
+      companionNetworks: {},
+    },
     [networkInfos.arbitrum.id]: {
       url: networkInfos.arbitrum.rpcUrls.default.http[0],
       chainId: networkInfos.arbitrum.id,
@@ -172,6 +189,21 @@ const config: HardhatConfig = {
     [networkInfos.base.id]: {
       url: networkInfos.base.rpcUrls.default.http[0],
       chainId: networkInfos.base.id,
+      accounts: [loadPrivateKeyFromKeyfile()],
+      gas: 'auto',
+      gasPrice: 'auto',
+      gasMultiplier: 1,
+      timeout: 3000000,
+      httpHeaders: {},
+      live: true,
+      saveDeployments: true,
+      tags: ['mainnet', 'prod'],
+      companionNetworks: {},
+    },
+
+    [monadPrivateMainnet.id]: {
+      url: monadPrivateMainnet.rpcUrls.default.http[0],
+      chainId: monadPrivateMainnet.id,
       accounts: [loadPrivateKeyFromKeyfile()],
       gas: 'auto',
       gasPrice: 'auto',

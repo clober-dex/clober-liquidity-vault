@@ -4,6 +4,7 @@ import { deployWithVerify, BOOK_MANAGER, SAFE_WALLET } from '../utils'
 import { getChain } from '@nomicfoundation/hardhat-viem/internal/chains'
 import { Address } from 'viem'
 import { arbitrumSepolia, base, monadTestnet, sonic } from 'viem/chains'
+import { monadPrivateMainnet, riseTestnet } from '../utils/chains'
 
 const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts, network } = hre
@@ -24,10 +25,13 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
   } else if (chain.id === base.id) {
     oracleAddress = (await deployments.get('DatastreamOracle')).address as Address
     owner = SAFE_WALLET[chain.id] // Safe
-  } else if (chain.id == sonic.id) {
+  } else if (chain.id == sonic.id || chain.id == monadPrivateMainnet.id) {
     oracleAddress = (await deployments.get('ChainlinkOracle')).address as Address
     owner = SAFE_WALLET[chain.id] // Safe
   } else if (chain.id == monadTestnet.id) {
+    oracleAddress = (await deployments.get('ChainlinkOracle')).address as Address
+    owner = deployer
+  } else if (chain.id == riseTestnet.id) {
     oracleAddress = (await deployments.get('ChainlinkOracle')).address as Address
     owner = deployer
   } else {
