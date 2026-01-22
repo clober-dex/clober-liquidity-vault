@@ -10,4 +10,13 @@ evm_version = 'cancun'
 [fuzz]
 runs = 10_000
 
+[rpc_endpoints]
+# NOTE: These are the only supported deployment targets for this repo's Foundry scripts.
+base = "${BASE_RPC_URL}"
+arbitrum = "${ARBITRUM_RPC_URL}"
+monad = "${MONAD_RPC_URL}"
+
+[etherscan]
+base = { key = "${BASESCAN_API_KEY}", chain = 8453 }
+
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
