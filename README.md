@@ -61,11 +61,11 @@ Upgradeable contracts list **proxy addresses only**.
 
 | Contract | Address | Explorer |
 | - | - | - |
-| LiquidityVault (Proxy) | `0x5b351C9eED322616F76b8669176412e1808c06B5` | `https://basescan.org/address/0x5b351C9eED322616F76b8669176412e1808c06B5` |
-| SimpleOracleStrategy (Proxy) | `0x454B85D03Ffbf86c2bFb0DaCd21d2687d36FE892` | `https://basescan.org/address/0x454B85D03Ffbf86c2bFb0DaCd21d2687d36FE892` |
-| Operator (Proxy) | `0x7bA560D09BD5379216f1E4393906701210CB63Fb` | `https://basescan.org/address/0x7bA560D09BD5379216f1E4393906701210CB63Fb` |
-| ChainlinkOracle | `0x3Ae1e578E511B7Bd9f777A4Bea0F6a6633Fb3c83` | `https://basescan.org/address/0x3Ae1e578E511B7Bd9f777A4Bea0F6a6633Fb3c83` |
-| Minter | `0xC8f98f60Ce54E72cCBb18AA8628fa7a2885F098f` | `https://basescan.org/address/0xC8f98f60Ce54E72cCBb18AA8628fa7a2885F098f` |
+| LiquidityVault (Proxy) | `0xca1f6e4ae690d06e3bf943b9019c5ca060c0b834` | `https://basescan.org/address/0xca1f6e4ae690d06e3bf943b9019c5ca060c0b834` |
+| SimpleOracleStrategy (Proxy) | `0x29e07197ccf70d0ac6cb0a3c307627819f5f2777` | `https://basescan.org/address/0x29e07197ccf70d0ac6cb0a3c307627819f5f2777` |
+| Operator (Proxy) | `0x00f7a0c7e66f0e3a10d9e980e0854ebe0e308625` | `https://basescan.org/address/0x00f7a0c7e66f0e3a10d9e980e0854ebe0e308625` |
+| ChainlinkOracle | `0xd08e387542121f8305bb976e222cbb7c1a56dd77` | `https://basescan.org/address/0xd08e387542121f8305bb976e222cbb7c1a56dd77` |
+| Minter | `0x2092a58c47f3444c82871ecdd5ea1e96c80c59d1` | `https://basescan.org/address/0x2092a58c47f3444c82871ecdd5ea1e96c80c59d1` |
 
 ### Monad (chainId: 143)
 

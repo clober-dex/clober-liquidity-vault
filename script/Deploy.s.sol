@@ -25,7 +25,7 @@ contract DeployScript is Script {
     address internal constant MONAD_SAFE = 0xfb976Bae0b3Ef71843F1c6c63da7Df2e44B3836d;
 
     // --- Core dependencies ---
-    address internal constant BASE_BOOK_MANAGER = 0x382CCccbD3b142D7DA063bF68cd0c89634767F76;
+    address internal constant BASE_BOOK_MANAGER = 0x8Ca3a6F4a6260661fcb9A25584c796a1Fa380112;
     address internal constant MONAD_BOOK_MANAGER = 0x6657d192273731C3cAc646cc82D5F28D0CBE8CCC;
 
     // Router used by `Minter`
