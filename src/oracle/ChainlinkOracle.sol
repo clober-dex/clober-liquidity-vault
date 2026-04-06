@@ -129,7 +129,7 @@ contract ChainlinkOracle is IChainlinkOracle, Ownable2Step {
         if (sequencerOracle == address(0)) {
             return true;
         }
-        (, int256 answer,, uint256 updatedAt,) = AggregatorV3Interface(sequencerOracle).latestRoundData();
-        return answer == 0 && block.timestamp - updatedAt > gracePeriod;
+        (, int256 answer, uint256 startedAt,,) = AggregatorV3Interface(sequencerOracle).latestRoundData();
+        return answer == 0 && block.timestamp - startedAt > gracePeriod;
     }
 }
