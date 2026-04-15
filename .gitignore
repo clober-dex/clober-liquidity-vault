@@ -35,3 +35,4 @@ types/
 **/.*.swp
 
 *-key.json
+mm-*.json
