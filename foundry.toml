@@ -18,5 +18,6 @@ monad = "${MONAD_RPC_URL}"
 
 [etherscan]
 base = { key = "${BASESCAN_API_KEY}", chain = 8453 }
+arbitrum = { key = "${ARBISCAN_API_KEY}", chain = 42161 }
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

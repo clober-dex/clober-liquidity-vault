@@ -7,24 +7,24 @@ source .env
 set +a
 
 # usage:
-#   ./script/upgrade-uups.sh base|monad upgradeLiquidityVault 0xProxy
-#   ./script/upgrade-uups.sh base|monad upgradeOperator 0xProxy
-#   ./script/upgrade-uups.sh base|monad upgradeSimpleOracleStrategy 0xProxy
-#   ./script/upgrade-uups.sh base|monad upgradeDatastreamOracle 0xProxy
+#   ./script/upgrade-uups.sh base|monad|arbitrum upgradeLiquidityVault 0xProxy
+#   ./script/upgrade-uups.sh base|monad|arbitrum upgradeOperator 0xProxy
+#   ./script/upgrade-uups.sh base|monad|arbitrum upgradeSimpleOracleStrategy 0xProxy
+#   ./script/upgrade-uups.sh base|monad|arbitrum upgradeDatastreamOracle 0xProxy
 NETWORK="${1:-}"
 FUNC="${2:-}"
 PROXY="${3:-}"
 
 if [[ -z "$NETWORK" || -z "$FUNC" || -z "$PROXY" ]]; then
-  echo "Usage: $0 [base|monad] [upgradeLiquidityVault|upgradeOperator|upgradeSimpleOracleStrategy|upgradeDatastreamOracle] [proxy]"
+  echo "Usage: $0 [base|monad|arbitrum] [upgradeLiquidityVault|upgradeOperator|upgradeSimpleOracleStrategy|upgradeDatastreamOracle] [proxy]"
   exit 1
 fi
 
 case "$NETWORK" in
-  base|monad)
+  base|monad|arbitrum)
     ;;
   *)
-    echo "Usage: $0 [base|monad] ..."
+    echo "Usage: $0 [base|monad|arbitrum] ..."
     exit 1
     ;;
 esac

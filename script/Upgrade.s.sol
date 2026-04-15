@@ -2,12 +2,6 @@
 pragma solidity ^0.8.25;
 
 import {Script, console2} from "forge-std/Script.sol";
-
-import {IBookManager} from "clober-dex/v2-core/interfaces/IBookManager.sol";
-import {IVerifierProxy} from "../src/external/chainlink/IVerifierProxy.sol";
-import {IOracle} from "../src/interfaces/IOracle.sol";
-import {ILiquidityVault} from "../src/interfaces/ILiquidityVault.sol";
-
 import {UUPSUpgradeable} from "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
 
 import {LiquidityVault} from "../src/LiquidityVault.sol";
@@ -16,6 +10,10 @@ import {SimpleOracleStrategy} from "../src/SimpleOracleStrategy.sol";
 import {DatastreamOracle} from "../src/oracle/DatastreamOracle.sol";
 
 contract UpgradeScript is Script {
+    // NOTE: Upgrade helpers read constructor-immutable args from the live proxy,
+    // so the new implementation preserves bookManager / oracle / vault wiring.
+    // ChainlinkOracle and Minter are non-UUPS and are redeployed via Deploy.s.sol.
+
     modifier broadcast() {
         vm.startBroadcast();
         _;
@@ -56,7 +54,9 @@ contract UpgradeScript is Script {
     // ---- SimpleOracleStrategy ----
     function deploySimpleOracleStrategyImplementation(address proxy) public broadcast returns (address implementation) {
         SimpleOracleStrategy current = SimpleOracleStrategy(payable(proxy));
-        implementation = address(new SimpleOracleStrategy(current.referenceOracle(), current.liquidityVault(), current.bookManager()));
+        implementation = address(
+            new SimpleOracleStrategy(current.referenceOracle(), current.liquidityVault(), current.bookManager())
+        );
         console2.log("SimpleOracleStrategy new implementation:", implementation);
     }
 
@@ -77,4 +77,3 @@ contract UpgradeScript is Script {
         upgradeTo(proxy, implementation);
     }
 }
-

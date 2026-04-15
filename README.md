@@ -41,7 +41,7 @@ forge fmt
 
 This repo includes Foundry `forge script` deploy/upgrade helpers under `script/`.
 
-- Supported networks: `base`, `monad` (see `foundry.toml` `[rpc_endpoints]`)
+- Supported networks: `base`, `monad`, `arbitrum` (see `foundry.toml` `[rpc_endpoints]`)
 - Environment: copy `env.example` to `.env` and fill in values.
 
 Examples:
@@ -50,6 +50,7 @@ Examples:
 cp env.example .env
 ./script/deploy-all.sh base
 ./script/deploy-all.sh monad
+./script/deploy-all.sh arbitrum
 ./script/upgrade-uups.sh base upgradeLiquidityVault 0xYourProxyAddress
 ```
 
@@ -78,3 +79,15 @@ Addresses are sourced from `deployments/143/`. Upgradeable contracts list **prox
 | Operator (Proxy) | `0xCBd3C0B81A9a36356a3669A7f60A0d2F0846195B` | `https://monadvision.com/address/0xCBd3C0B81A9a36356a3669A7f60A0d2F0846195B` |
 | ChainlinkOracle | `0xFbc3CF3d77e128282c6A99D5642f28081AAf2269` | `https://monadvision.com/address/0xFbc3CF3d77e128282c6A99D5642f28081AAf2269` |
 | Minter | `0xb1251BF43Bb7De76DE7e6CE7B64aF843dfc9d242` | `https://monadvision.com/address/0xb1251BF43Bb7De76DE7e6CE7B64aF843dfc9d242` |
+
+### Arbitrum (chainId: 42161)
+
+Upgradeable contracts list **proxy addresses only**.
+
+| Contract | Address | Explorer |
+| - | - | - |
+| LiquidityVault (Proxy) | `0x21bb8709Fe339b227795809B0cb8Eb5a152Ad7E1` | `https://arbiscan.io/address/0x21bb8709Fe339b227795809B0cb8Eb5a152Ad7E1` |
+| SimpleOracleStrategy (Proxy) | `0x2610DC1F2e625E57F07B0ce17152b0f4C6520bcA` | `https://arbiscan.io/address/0x2610DC1F2e625E57F07B0ce17152b0f4C6520bcA` |
+| Operator (Proxy) | `0xcd166F67F13c7d5C4B899Fb1c980Dceff278F029` | `https://arbiscan.io/address/0xcd166F67F13c7d5C4B899Fb1c980Dceff278F029` |
+| ChainlinkOracle | `0xBB8363721696a44273b2EdC93482AFF86C48898F` | `https://arbiscan.io/address/0xBB8363721696a44273b2EdC93482AFF86C48898F` |
+| Minter | `0xFe87e2Cc08A8801a12105d862AEe71470883A76d` | `https://arbiscan.io/address/0xFe87e2Cc08A8801a12105d862AEe71470883A76d` |

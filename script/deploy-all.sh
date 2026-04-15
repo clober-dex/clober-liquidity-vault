@@ -7,18 +7,18 @@ set -a
 source .env
 set +a
 
-# usage: ./script/deploy-all.sh base|monad
+# usage: ./script/deploy-all.sh base|monad|arbitrum
 NETWORK="${1:-}"
 if [[ -z "$NETWORK" ]]; then
-  echo "Usage: $0 [base|monad]"
+  echo "Usage: $0 [base|monad|arbitrum]"
   exit 1
 fi
 
 case "$NETWORK" in
-  base|monad)
+  base|monad|arbitrum)
     ;;
   *)
-    echo "Usage: $0 [base|monad]"
+    echo "Usage: $0 [base|monad|arbitrum]"
     exit 1
     ;;
 esac
